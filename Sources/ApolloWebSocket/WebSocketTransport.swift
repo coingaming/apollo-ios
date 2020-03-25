@@ -302,6 +302,12 @@ public class WebSocketTransport {
 // MARK: - HTTPNetworkTransport conformance
 
 extension WebSocketTransport: NetworkTransport {
+  public func updateHeaders(_ headers: [String : String], for operationType: Apollo.GraphQLOperationType) {
+    headers.forEach {
+      websocket.request.setValue($0.value, forHTTPHeaderField: $0.key)
+    }
+  }
+
   public func send<Operation>(operation: Operation, completionHandler: @escaping (_ result: Result<GraphQLResponse<Operation>,Error>) -> Void) -> Cancellable {
     if let error = self.error.value {
       completionHandler(.failure(error))

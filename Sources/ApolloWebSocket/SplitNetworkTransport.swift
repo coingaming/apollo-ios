@@ -41,6 +41,13 @@ public class SplitNetworkTransport {
 // MARK: - NetworkTransport conformance
 
 extension SplitNetworkTransport: NetworkTransport {
+  public func updateHeaders(_ headers: [String : String], for operationType: Apollo.GraphQLOperationType) {
+    if operationType == .subscription {
+      webSocketNetworkTransport.updateHeaders(headers, for: operationType)
+    } else {
+      httpNetworkTransport.updateHeaders(headers, for: operationType)
+    }
+  }
 
   public func send<Operation>(operation: Operation, completionHandler: @escaping (Result<GraphQLResponse<Operation>, Error>) -> Void) -> Cancellable {
     if operation.operationType == .subscription {
