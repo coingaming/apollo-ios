@@ -3,16 +3,16 @@ version: 2.1
 parameters:
   xcode_version:
     type: string
-    default: "11.3.1"
+    default: "11.4.0"
   ios_current_version:
     type: string
-    default: "13.3"
+    default: "13.4"
   ios_previous_version:
     type: string
     default: "12.4"
   ios_sdk:
     type: string
-    default: "iphonesimulator13.2"
+    default: "iphonesimulator13.4"
   macos_version: # The user-facing version string for macOS builds
     type: string
     default: "10.15"
@@ -21,10 +21,10 @@ parameters:
     default: "macosx10.15"
   tvos_version: # The user-facing version string of tvOS builds
     type: string
-    default: "13.3"
+    default: "13.4"
   tvos_sdk:
     type: string
-    default: "appletvsimulator13.2"
+    default: "appletvsimulator13.4"
 
 commands:
   common_test_steps:
@@ -45,10 +45,10 @@ commands:
           name: Start StarWars Server
           background: true
       - run:
-          command: xcodebuild clean build build-for-testing -workspace "Apollo.xcworkspace" -scheme "${CIRCLE_XCODE_SCHEME}" -sdk "${CIRCLE_XCODE_SDK}" -destination "${DESTINATION}" | xcpretty
+          command: xcodebuild clean build build-for-testing -project "Apollo.xcodeproj" -scheme "${CIRCLE_XCODE_SCHEME}" -sdk "${CIRCLE_XCODE_SDK}" -destination "${DESTINATION}" | xcpretty
           name: Clean and build for testing
       - run:
-          command: xcodebuild test-without-building -workspace "Apollo.xcworkspace" -scheme "${CIRCLE_XCODE_SCHEME}" -sdk "${CIRCLE_XCODE_SDK}" -destination "${DESTINATION}" | xcpretty
+          command: xcodebuild test-without-building -project "Apollo.xcodeproj" -scheme "${CIRCLE_XCODE_SCHEME}" -sdk "${CIRCLE_XCODE_SDK}" -destination "${DESTINATION}" | xcpretty
           name: Run tests
       - save_cache:
           key: starwars-server
@@ -159,6 +159,16 @@ jobs:
     steps:
       - common_test_steps
 
+  CodegenLibmacOS_current:
+    macos:
+      xcode: << pipeline.parameters.xcode_version >>
+    environment:
+      DESTINATION: platform=macOS,arch=x86_64
+      CIRCLE_XCODE_SCHEME: ApolloCodegenLib
+      CIRCLE_XCODE_SDK: << pipeline.parameters.macos_sdk >>
+    steps:
+      - common_test_steps
+
   CocoaPodsTrunk:
     macos:
       xcode: << pipeline.parameters.xcode_version >>
@@ -195,6 +205,8 @@ workflows:
           name: ApolloWebSocket iOS << pipeline.parameters.ios_current_version >>
       - WebSocketiOS_previous:
           name: ApolloWebSocket iOS << pipeline.parameters.ios_previous_version >>
+      - CodegenLibmacOS_current:
+          name: Swift Code Generation
       - CocoaPodsTrunk:
           name: Push Podspec to CocoaPods Trunk
           requires:
@@ -208,6 +220,7 @@ workflows:
             - ApolloWebSocket macOS << pipeline.parameters.macos_version >>
             - ApolloWebSocket iOS << pipeline.parameters.ios_current_version >>
             - ApolloWebSocket iOS << pipeline.parameters.ios_previous_version >>
+            - Swift Code Generation
           filters:
             # Only build semver tags
             tags:
