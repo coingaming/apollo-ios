@@ -445,6 +445,12 @@ extension HTTPNetworkTransport: NetworkTransport {
                 files: nil,
                 completionHandler: completionHandler)
   }
+
+  public func updateHeaders(_ headers: [String : String]) {
+    headers.forEach {
+      session.configuration.httpAdditionalHeaders?[$0.key] = $0.value
+    }
+  }
 }
 
 // MARK: - UploadingNetworkTransport conformance

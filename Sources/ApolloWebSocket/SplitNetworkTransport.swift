@@ -41,6 +41,10 @@ public class SplitNetworkTransport {
 // MARK: - NetworkTransport conformance
 
 extension SplitNetworkTransport: NetworkTransport {
+  public func updateHeaders(_ headers: [String : String]) {
+      webSocketNetworkTransport.updateHeaders(headers)
+      httpNetworkTransport.updateHeaders(headers)
+  }
 
   public func send<Operation: GraphQLOperation>(operation: Operation, completionHandler: @escaping (Result<GraphQLResponse<Operation.Data>, Error>) -> Void) -> Cancellable {
     if operation.operationType == .subscription {

@@ -18,6 +18,8 @@ public protocol NetworkTransport: class {
 
   /// The version of the client to send as a header value.
   var clientVersion: String { get }
+
+  func updateHeaders(_ headers: [String : String])
 }
 
 public extension NetworkTransport {
