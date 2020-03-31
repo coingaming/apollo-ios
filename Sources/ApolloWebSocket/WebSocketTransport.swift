@@ -37,7 +37,7 @@ public class WebSocketTransport {
 
   private var queue: [Int: String] = [:]
   private var connectingPayload: GraphQLMap?
-  private let token: String?
+  private var token: String?
 
   private var subscribers = [String: (Result<JSONObject, Error>) -> Void]()
   private var subscriptions : [String: String] = [:]
@@ -114,6 +114,11 @@ public class WebSocketTransport {
 
   public func ping(data: Data, completionHandler: (() -> Void)? = nil) {
     return websocket.write(ping: data, completion: completionHandler)
+  }
+
+  /// Updates the token
+  public func update(token: String?) {
+    self.token = token
   }
 
   private func pingPong(for requestType: OperationMessage.Types) {
