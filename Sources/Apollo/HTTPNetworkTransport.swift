@@ -446,7 +446,7 @@ extension HTTPNetworkTransport: NetworkTransport {
                 completionHandler: completionHandler)
   }
 
-  public func updateHeaders(_ headers: [String : String], for operationType: Apollo.GraphQLOperationType) {
+  public func updateHeaders(_ headers: [String : String]) {
     headers.forEach {
       session.configuration.httpAdditionalHeaders?[$0.key] = $0.value
     }

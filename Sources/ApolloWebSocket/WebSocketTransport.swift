@@ -302,7 +302,7 @@ public class WebSocketTransport {
 // MARK: - HTTPNetworkTransport conformance
 
 extension WebSocketTransport: NetworkTransport {
-  public func updateHeaders(_ headers: [String : String], for operationType: Apollo.GraphQLOperationType) {
+  public func updateHeaders(_ headers: [String : String]) {
     headers.forEach {
       websocket.request.setValue($0.value, forHTTPHeaderField: $0.key)
     }
