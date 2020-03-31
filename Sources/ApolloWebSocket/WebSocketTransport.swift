@@ -308,7 +308,7 @@ extension WebSocketTransport: NetworkTransport {
     }
   }
 
-  public func send<Operation>(operation: Operation, completionHandler: @escaping (_ result: Result<GraphQLResponse<Operation>,Error>) -> Void) -> Cancellable {
+  public func send<Operation: GraphQLOperation>(operation: Operation, completionHandler: @escaping (_ result: Result<GraphQLResponse<Operation.Data>, Error>) -> Void) -> Cancellable {
     if let error = self.error.value {
       completionHandler(.failure(error))
       return EmptyCancellable()
