@@ -353,6 +353,15 @@ public class HTTPNetworkTransport {
         sendQueryDocument = !self.enableAutoPersistedQueries
         autoPersistQueries = self.enableAutoPersistedQueries
       }
+    case .mutation:
+      useGetMethod = false
+      if isPersistedQueryRetry {
+        sendQueryDocument = true
+        autoPersistQueries = true
+      } else {
+        sendQueryDocument = !self.enableAutoPersistedQueries
+        autoPersistQueries = self.enableAutoPersistedQueries
+      }
     default:
       useGetMethod = false
       sendQueryDocument = true
