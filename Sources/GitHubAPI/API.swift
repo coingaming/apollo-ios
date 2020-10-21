@@ -19,9 +19,11 @@ public final class RepositoryQuery: GraphQLQuery {
   public struct Data: GraphQLSelectionSet {
     public static let possibleTypes: [String] = ["Query"]
 
-    public static let selections: [GraphQLSelection] = [
-      GraphQLField("repository", arguments: ["owner": "apollographql", "name": "apollo-ios"], type: .object(Repository.selections)),
-    ]
+    public static var selections: [GraphQLSelection] {
+      return [
+        GraphQLField("repository", arguments: ["owner": "apollographql", "name": "apollo-ios"], type: .object(Repository.selections)),
+      ]
+    }
 
     public private(set) var resultMap: ResultMap
 
@@ -46,10 +48,12 @@ public final class RepositoryQuery: GraphQLQuery {
     public struct Repository: GraphQLSelectionSet {
       public static let possibleTypes: [String] = ["Repository"]
 
-      public static let selections: [GraphQLSelection] = [
-        GraphQLField("__typename", type: .nonNull(.scalar(String.self))),
-        GraphQLField("issueOrPullRequest", arguments: ["number": 13], type: .object(IssueOrPullRequest.selections)),
-      ]
+      public static var selections: [GraphQLSelection] {
+        return [
+          GraphQLField("__typename", type: .nonNull(.scalar(String.self))),
+          GraphQLField("issueOrPullRequest", arguments: ["number": 13], type: .object(IssueOrPullRequest.selections)),
+        ]
+      }
 
       public private(set) var resultMap: ResultMap
 
@@ -83,16 +87,18 @@ public final class RepositoryQuery: GraphQLQuery {
       public struct IssueOrPullRequest: GraphQLSelectionSet {
         public static let possibleTypes: [String] = ["Issue", "PullRequest"]
 
-        public static let selections: [GraphQLSelection] = [
-          GraphQLTypeCase(
-            variants: ["Issue": AsIssue.selections],
-            default: [
-              GraphQLField("__typename", type: .nonNull(.scalar(String.self))),
-              GraphQLField("viewerCanReact", type: .nonNull(.scalar(Bool.self))),
-              GraphQLField("author", type: .object(Author.selections)),
-            ]
-          )
-        ]
+        public static var selections: [GraphQLSelection] {
+          return [
+            GraphQLTypeCase(
+              variants: ["Issue": AsIssue.selections],
+              default: [
+                GraphQLField("__typename", type: .nonNull(.scalar(String.self))),
+                GraphQLField("viewerCanReact", type: .nonNull(.scalar(Bool.self))),
+                GraphQLField("author", type: .object(Author.selections)),
+              ]
+            )
+          ]
+        }
 
         public private(set) var resultMap: ResultMap
 
@@ -138,17 +144,31 @@ public final class RepositoryQuery: GraphQLQuery {
         }
 
         public struct Author: GraphQLSelectionSet {
-          public static let possibleTypes: [String] = ["Organization", "User", "Bot"]
+          public static let possibleTypes: [String] = ["Bot", "EnterpriseUserAccount", "Mannequin", "Organization", "User"]
 
-          public static let selections: [GraphQLSelection] = [
-            GraphQLField("__typename", type: .nonNull(.scalar(String.self))),
-            GraphQLField("login", type: .nonNull(.scalar(String.self))),
-          ]
+          public static var selections: [GraphQLSelection] {
+            return [
+              GraphQLField("__typename", type: .nonNull(.scalar(String.self))),
+              GraphQLField("login", type: .nonNull(.scalar(String.self))),
+            ]
+          }
 
           public private(set) var resultMap: ResultMap
 
           public init(unsafeResultMap: ResultMap) {
             self.resultMap = unsafeResultMap
+          }
+
+          public static func makeBot(login: String) -> Author {
+            return Author(unsafeResultMap: ["__typename": "Bot", "login": login])
+          }
+
+          public static func makeEnterpriseUserAccount(login: String) -> Author {
+            return Author(unsafeResultMap: ["__typename": "EnterpriseUserAccount", "login": login])
+          }
+
+          public static func makeMannequin(login: String) -> Author {
+            return Author(unsafeResultMap: ["__typename": "Mannequin", "login": login])
           }
 
           public static func makeOrganization(login: String) -> Author {
@@ -157,10 +177,6 @@ public final class RepositoryQuery: GraphQLQuery {
 
           public static func makeUser(login: String) -> Author {
             return Author(unsafeResultMap: ["__typename": "User", "login": login])
-          }
-
-          public static func makeBot(login: String) -> Author {
-            return Author(unsafeResultMap: ["__typename": "Bot", "login": login])
           }
 
           public var __typename: String {
@@ -197,14 +213,16 @@ public final class RepositoryQuery: GraphQLQuery {
         public struct AsIssue: GraphQLSelectionSet {
           public static let possibleTypes: [String] = ["Issue"]
 
-          public static let selections: [GraphQLSelection] = [
-            GraphQLField("__typename", type: .nonNull(.scalar(String.self))),
-            GraphQLField("body", type: .nonNull(.scalar(String.self))),
-            GraphQLField("url", type: .nonNull(.scalar(String.self))),
-            GraphQLField("author", type: .object(Author.selections)),
-            GraphQLField("viewerCanReact", type: .nonNull(.scalar(Bool.self))),
-            GraphQLField("author", type: .object(Author.selections)),
-          ]
+          public static var selections: [GraphQLSelection] {
+            return [
+              GraphQLField("__typename", type: .nonNull(.scalar(String.self))),
+              GraphQLField("body", type: .nonNull(.scalar(String.self))),
+              GraphQLField("url", type: .nonNull(.scalar(String.self))),
+              GraphQLField("author", type: .object(Author.selections)),
+              GraphQLField("viewerCanReact", type: .nonNull(.scalar(Bool.self))),
+              GraphQLField("author", type: .object(Author.selections)),
+            ]
+          }
 
           public private(set) var resultMap: ResultMap
 
@@ -266,19 +284,33 @@ public final class RepositoryQuery: GraphQLQuery {
           }
 
           public struct Author: GraphQLSelectionSet {
-            public static let possibleTypes: [String] = ["Organization", "User", "Bot"]
+            public static let possibleTypes: [String] = ["Bot", "EnterpriseUserAccount", "Mannequin", "Organization", "User"]
 
-            public static let selections: [GraphQLSelection] = [
-              GraphQLField("__typename", type: .nonNull(.scalar(String.self))),
-              GraphQLField("avatarUrl", type: .nonNull(.scalar(String.self))),
-              GraphQLField("__typename", type: .nonNull(.scalar(String.self))),
-              GraphQLField("login", type: .nonNull(.scalar(String.self))),
-            ]
+            public static var selections: [GraphQLSelection] {
+              return [
+                GraphQLField("__typename", type: .nonNull(.scalar(String.self))),
+                GraphQLField("avatarUrl", type: .nonNull(.scalar(String.self))),
+                GraphQLField("__typename", type: .nonNull(.scalar(String.self))),
+                GraphQLField("login", type: .nonNull(.scalar(String.self))),
+              ]
+            }
 
             public private(set) var resultMap: ResultMap
 
             public init(unsafeResultMap: ResultMap) {
               self.resultMap = unsafeResultMap
+            }
+
+            public static func makeBot(avatarUrl: String, login: String) -> Author {
+              return Author(unsafeResultMap: ["__typename": "Bot", "avatarUrl": avatarUrl, "login": login])
+            }
+
+            public static func makeEnterpriseUserAccount(avatarUrl: String, login: String) -> Author {
+              return Author(unsafeResultMap: ["__typename": "EnterpriseUserAccount", "avatarUrl": avatarUrl, "login": login])
+            }
+
+            public static func makeMannequin(avatarUrl: String, login: String) -> Author {
+              return Author(unsafeResultMap: ["__typename": "Mannequin", "avatarUrl": avatarUrl, "login": login])
             }
 
             public static func makeOrganization(avatarUrl: String, login: String) -> Author {
@@ -287,10 +319,6 @@ public final class RepositoryQuery: GraphQLQuery {
 
             public static func makeUser(avatarUrl: String, login: String) -> Author {
               return Author(unsafeResultMap: ["__typename": "User", "avatarUrl": avatarUrl, "login": login])
-            }
-
-            public static func makeBot(avatarUrl: String, login: String) -> Author {
-              return Author(unsafeResultMap: ["__typename": "Bot", "avatarUrl": avatarUrl, "login": login])
             }
 
             public var __typename: String {
@@ -343,9 +371,11 @@ public final class RepoUrlQuery: GraphQLQuery {
   public struct Data: GraphQLSelectionSet {
     public static let possibleTypes: [String] = ["Query"]
 
-    public static let selections: [GraphQLSelection] = [
-      GraphQLField("repository", arguments: ["owner": "apollographql", "name": "apollo-ios"], type: .object(Repository.selections)),
-    ]
+    public static var selections: [GraphQLSelection] {
+      return [
+        GraphQLField("repository", arguments: ["owner": "apollographql", "name": "apollo-ios"], type: .object(Repository.selections)),
+      ]
+    }
 
     public private(set) var resultMap: ResultMap
 
@@ -370,10 +400,12 @@ public final class RepoUrlQuery: GraphQLQuery {
     public struct Repository: GraphQLSelectionSet {
       public static let possibleTypes: [String] = ["Repository"]
 
-      public static let selections: [GraphQLSelection] = [
-        GraphQLField("__typename", type: .nonNull(.scalar(String.self))),
-        GraphQLField("url", type: .nonNull(.scalar(String.self))),
-      ]
+      public static var selections: [GraphQLSelection] {
+        return [
+          GraphQLField("__typename", type: .nonNull(.scalar(String.self))),
+          GraphQLField("url", type: .nonNull(.scalar(String.self))),
+        ]
+      }
 
       public private(set) var resultMap: ResultMap
 

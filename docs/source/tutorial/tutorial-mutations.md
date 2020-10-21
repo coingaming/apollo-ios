@@ -8,66 +8,126 @@ In this section, you'll learn how to build authenticated mutations and handle in
 
 Before you can book a trip, you need to be able to pass your authentication token along to the example server. To do that, let's dig a little deeper into how Apollo Client works. 
 
-The `ApolloClient` uses something called a `NetworkTransport` under the hood. By default, the client creates an `HTTPNetworkTransport` instance to handle talking over HTTP to your server.
+The `ApolloClient` uses something called a `NetworkTransport` under the hood. By default, the client creates a `RequestChainNetworkTransport` instance to handle talking over HTTP to your server.
 
-If you need to do anything before a request hits the wire but after Apollo has done most of the configuration for you, there's a delegate protocol called `HTTPNetworkTransportPreflightDelegate` that allows you to do that. 
+A `RequestChain` runs your request through an array of `ApolloInterceptor` objects which can mutate the request and/or check the cache before it hits the network, and then do additional work after a response is received from the network. 
 
-Open `Network.swift` and add an extension to conform to that delegate: 
+The `RequestChainNetworkTransport` uses an object that conforms to the `InterceptorProvider` protocol in order to create that array of interceptors for each operation it executes. There are a couple of providers that are set up by default, which return a fairly standard array of interceptors. 
 
-```swift:title=Network.swift
-extension Network: HTTPNetworkTransportPreflightDelegate { 
+The nice thing is that you can also add your own interceptors to the chain anywhere you need to perform custom actions. In this case, you want to have an interceptor that will add your token.
 
+First, create the new interceptor. Go to **File > New > File...** and create a new **Swift File**. Name it **TokenAddingInterceptor.swift**. Open that file, and add the 
+
+```swift:title=TokenAddingInterceptor.swift
+import Foundation
+import Apollo
+
+class TokenAddingInterceptor: ApolloInterceptor {
+    func interceptAsync<Operation: GraphQLOperation>(
+        chain: RequestChain,
+        request: HTTPRequest<Operation>,
+        response: HTTPResponse<Operation>?,
+        completion: @escaping (Result<GraphQLResult<Operation.Data>, Error>) -> Void) {
+        
+        // TODO
+    }
 }
 ```
 
-You'll get an error telling you that protocol stubs must be implemented, and asking you if you want to fix this. Click **Fix**.
+Next, import `KeychainSwift` at the top of the file so you can access the key you've just stored in the keychain.
 
-<img src="images/preflight_delegate_add_protocol_stubs.png" class="screenshot" alt="Do you wish to add protocol stubs with fix button"/>
+```swift:title=TokenAddingInterceptor.swift
+import KeychainSwift
+```
 
-Two protocol methods will be added: `networkTransport(_:shouldSend:)` and `networkTransport(_:willSend:)`. 
+Then, replace the `TODO` within the `interceptAsync` method with code to get the token from the keychain, and add it to your headers if it exists:
 
-The `shouldSend` method enables you to make sure a request should go out to the network at all. This is useful for things like checking that your user is logged in before trying to make a request. 
+```swift:title=TokenAddingInterceptor.swift
+let keychain = KeychainSwift()
+if let token = keychain.get(LoginViewController.loginKeychainKey) {
+    request.addHeader(name: "Authorization", value: token)
+} // else do nothing
+        
+chain.proceedAsync(request: request,
+                   response: response,
+                   completion: completion)
+```
 
-However, you're not going to use that functionality in this application. Update the method to have it return `true` all the time:
+Next, since you're only adding one interceptor that can run at the very beginning of other interceptors, you can subclass the existing `LegacyInterceptorProvider` (which is the default interceptor provider). 
 
-```swift:title=Network.swift  
-func networkTransport(_ networkTransport: HTTPNetworkTransport, 
-                      shouldSend request: URLRequest) -> Bool {
-	return true
+Go to **File > New > File...** and create a new **Swift File**. Name it **NetworkInterceptorProvider.swift**. Add an initial Add code which inserts your `TokenAddingInterceptor` before the other interceptors provided by the `LegacyInterceptorProvider`: 
+
+```swift:title=NetworkInterceptorProvider.swift
+import Foundation
+import Apollo
+
+class NetworkInterceptorProvider: LegacyInterceptorProvider {
+    override func interceptors<Operation: GraphQLOperation>(for operation: Operation) -> [ApolloInterceptor] {
+        var interceptors = super.interceptors(for: operation)
+        interceptors.insert(TokenAddingInterceptor(), at: 0)
+        return interceptors
+    }
 }
 ```
 
-The `willSend` request is the last thing that can manipulate the request before it goes out to the network. Because the request is passed as an `inout` variable, you can manipulate its contents directly. 
+> Another way to do this would be to copy the interceptors provided by the `LegacyInterceptorProvider` (which are all public), and then place your interceptors in the points in the array where you want them. However, since in this case we can run this interceptor first, it's just as simple to subclass. 
 
-Update the `willSend` method to add your token as the value for the `Authorization` header: 
+Next, go back to your `Network` class. Replace the `ApolloClient` with an updated `lazy var` which creates the `RequestChainNetworkTransport` manually, using your custom interceptor provider: 
 
 ```swift:title=Network.swift
-func networkTransport(_ networkTransport: HTTPNetworkTransport, 
-                      willSend request: inout URLRequest) {
-  let keychain = KeychainSwift()
-  if let token = keychain.get(LoginViewController.loginKeychainKey) {
-    request.addValue(token, forHTTPHeaderField: "Authorization")
-  } // else do nothing
+class Network {
+    static let shared = Network()
+    
+    private(set) lazy var apollo: ApolloClient = {
+        let client = URLSessionClient()
+        let cache = InMemoryNormalizedCache()
+        let store = ApolloStore(cache: cache)
+        let provider = NetworkInterceptorProvider(client: client, store: store)
+        let url = URL(string: "https://apollo-fullstack-tutorial.herokuapp.com/")!
+        let transport = RequestChainNetworkTransport(interceptorProvider: provider,
+                                                     endpointURL: url)
+        return ApolloClient(networkTransport: transport, store: store)
+    }()
 }
 ```
 
-Next, you need to make sure that Apollo knows that this delegate exists. To do that, you need to do something that Apollo Client has thus far been doing for you under the hood: instantiating the `HTTPNetworkTransport`.
-
-In the primary declaration of `Network`, update your `lazy var` to create this transport and set the `Network` object as its delegate, then pass it through to the `ApolloClient`: 
-
-```swift:title=Network.swift
-private(set) lazy var apollo: ApolloClient = {
- let httpNetworkTransport = HTTPNetworkTransport(url: URL(string: "https://apollo-fullstack-tutorial.herokuapp.com/")!)
- httpNetworkTransport.delegate = self
- return ApolloClient(networkTransport: httpNetworkTransport)
-}()
-```
-
+Now, go back to **TokenAddingInterceptor.swift**.
 Click on the line numbers to add a breakpoint at the line where you're instantiating the `Keychain`: 
 
-<img alt="adding a breakpoint" class="screenshot" src="images/preflight_delegate_breakpoint.png"/>
+<img alt="adding a breakpoint" class="screenshot" src="images/interceptor_breakpoint.png"/>
 
-Build and run the application. Whenever a network request goes out, that breakpoint should now get hit. If you're logged in, your token will be sent to the server whenever you make a request. 
+Build and run the application. Whenever a network request goes out, that breakpoint should now get hit. If you're logged in, your token will be sent to the server whenever you make a request!
+
+## Add Alert helper methods
+
+There is one more step you need to make before moving on to a book trip implementation.
+
+Go to **File > New > File... > Swift File**, and name this file `UIViewController+Alert.swift`. Update it with the following content.
+
+```swift:title=UIViewController+Alert.swift
+import UIKit
+import Apollo
+
+extension UIViewController {
+  func showAlert(title: String, message: String) {
+    let alert = UIAlertController(title: title,
+                                  message: message,
+                                  preferredStyle: .alert)
+    alert.addAction(UIAlertAction(title: "OK", style: .default))
+    self.present(alert, animated: true)
+  }
+    
+
+  func showAlertForErrors(_ errors: [GraphQLError]) {
+    let message = errors
+      .map { $0.localizedDescription }
+      .joined(separator: "\n")
+    self.showAlert(title: "GraphQL Error(s)", message: message)
+  }
+}
+```
+
+That extends the `UIViewController` with `showAlert` and `showAlertForErrors` methods required in the next steps.
 
 Now it's time to book a trip! 🚀
 
@@ -86,8 +146,8 @@ You can use this mutation to book multiple trips at once and get back:
 Start by adding a basic mutation in GraphiQL that passes in an array of trip identifiers, and then asks for the `success` and `message` back from the server: 
 
 ```graphql:title=(GraphiQL)
-mutation BookTrips($tripIDs:[ID]!) {
-  bookTrips(launchIds:$tripIDs) {
+mutation BookTrip($id:[ID]!) {
+  bookTrips(launchIds:$id) {
     success
     message
   }
@@ -97,13 +157,13 @@ mutation BookTrips($tripIDs:[ID]!) {
 In the `Query Variables` section of GraphiQL, add an array of identifiers. In this case, we'll use a single identifier to book one trip:
 
 ```json:title=(GraphiQL)
-{"tripIDs": ["25"]}
+{"id": ["25"]}
 ```
 
 In the `HTTP Headers` section of GraphiQL, add an authorization header to pass through the token you received when you logged in:
 
 ```json:title=(GraphiQL)
-{ "Authorization" :"YOUR_TOKEN"}
+{"Authorization": "YOUR_TOKEN"}
 ```
 
 Now, click the play button to run your authorized query in GraphiQL. You'll get back information regarding the trips (or in this case, trip) you've just booked. 
@@ -127,10 +187,10 @@ mutation BookTrip($id:ID!) {
 
 This is helpful because the Swift code generation will now generate a method that only accepts a single ID instead of an array, but you'll still be calling the same mutation under the hood, without the backend needing to change anything. 
 
-In the `Query Variables` section of GraphiQL, update variables to use `tripID` as the key, and remove the array brackets from around the identifier: 
+In the `Query Variables` section of GraphiQL, update variables to use `id` as the key, and remove the array brackets from around the identifier:
 
 ```json:title=(GraphiQL)
-{"id":"25"}
+{"id": "25"}
 ```
 
 Click the play button to run your updated query in GraphiQL. The response you get back should identical to the one you got earlier:
@@ -165,7 +225,7 @@ private func bookTrip(with id: GraphQLID) {
 ```
 
 
-Update the `cancelTrip` method to also take the flight's ID (you'll be adding the actual cancellation in the next step): 
+Then, add a new `cancelTrip` method to also take the flight's ID (you'll be adding the actual cancellation in the next step): 
 
 ```swift:title=DetailViewController.swift
 private func cancelTrip(with id: GraphQLID) {
@@ -225,7 +285,7 @@ In the `Query Variables` section of GraphiQL, you can use the exact same JSON th
 Make sure that in the `HTTP Headers` section of GraphiQL, your authorization token is still set up:
 
 ```json:title=(GraphiQL)
-{ "Authorization" :"(your token)"}
+{"Authorization": "YOUR_TOKEN"}
 ```
 
 Click the play button to cancel the trip, and you should see a successful request: 
@@ -247,6 +307,7 @@ Network.shared.apollo.perform(mutation: CancelTripMutation(id: id)) { [weak self
       if cancelResult.success {
         // TODO
       }
+    }
 
     if let errors = graphQLResult.errors {
       self.showAlertForErrors(errors)
@@ -294,7 +355,7 @@ private func loadLaunchDetails(forceReload: Bool = false) {
   guard
     let launchID = self.launchID,
     (forceReload || launchID != self.launch?.id) else {
-      // This is the launch we're alrady displaying, or the ID is nil.
+      // This is the launch we're already displaying, or the ID is nil.
       return
   }
         

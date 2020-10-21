@@ -7,6 +7,9 @@ let package = Package(
     name: "Apollo",
     products: [
     .library(
+      name: "ApolloCore",
+      targets: ["ApolloCore"]),
+    .library(
       name: "Apollo",
       targets: ["Apollo"]),
     .library(
@@ -28,15 +31,21 @@ let package = Package(
       .upToNextMinor(from: "3.1.1")),
     .package(
       url: "https://github.com/stencilproject/Stencil.git",
-      .upToNextMinor(from: "0.13.1")),
+      .upToNextMinor(from: "0.14.0")),
     ],
     targets: [
+      .target(
+        name: "ApolloCore",
+        dependencies: []),
     .target(
       name: "Apollo",
-      dependencies: []),
+      dependencies: [
+        "ApolloCore",
+      ]),
     .target(
       name: "ApolloCodegenLib",
       dependencies: [
+        "ApolloCore",
         .product(name: "Stencil", package: "Stencil"),
       ]),
     .target(
@@ -55,6 +64,7 @@ let package = Package(
       name: "ApolloWebSocket",
       dependencies: [
         "Apollo",
+        "ApolloCore",
         .product(name: "Starscream", package: "Starscream"),
       ]),
     .target(
@@ -72,12 +82,17 @@ let package = Package(
       dependencies: [
         "Apollo",
       ]),
-
+    .target(
+      name: "UploadAPI",
+      dependencies: [
+        "Apollo",
+      ]),
     .testTarget(
       name: "ApolloTests",
       dependencies: [
         "ApolloTestSupport",
         "StarWarsAPI",
+        "UploadAPI"
       ]),
     .testTarget(
       name: "ApolloCacheDependentTests",
@@ -88,6 +103,7 @@ let package = Package(
     .testTarget(
       name: "ApolloCodegenTests",
       dependencies: [
+        "ApolloTestSupport",
         "ApolloCodegenLib"
       ]),
     .testTarget(

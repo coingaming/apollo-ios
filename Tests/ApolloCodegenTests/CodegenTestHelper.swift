@@ -11,8 +11,21 @@ import XCTest
 
 struct CodegenTestHelper {
   
+  static func dummyOptions() -> ApolloCodegenOptions {    
+    let unusedURL = CodegenTestHelper.apolloFolderURL()
+    return ApolloCodegenOptions(outputFormat: .singleFile(atFileURL: unusedURL),
+                                urlToSchemaFile: unusedURL)
+  }
+  
+  static func dummyOptionsNoModifier() -> ApolloCodegenOptions {
+    let unusedURL = CodegenTestHelper.apolloFolderURL()
+    return ApolloCodegenOptions(modifier: .none,
+                                outputFormat: .singleFile(atFileURL: unusedURL),
+                                urlToSchemaFile: unusedURL)
+  }
+  
   static func handleFileLoadError(_ error: Error,
-                                  file: StaticString = #file,
+                                  file: StaticString = #filePath,
                                   line: UInt = #line) {
     let nsError = error as NSError
     if let underlying = nsError.userInfo["NSUnderlyingError"] as? NSError,
@@ -82,11 +95,11 @@ struct CodegenTestHelper {
       .appendingPathComponent("Output")
   }
   
-  static func deleteExistingOutputFolder(file: StaticString = #file,
+  static func deleteExistingOutputFolder(file: StaticString = #filePath,
                                          line: UInt = #line) {
     do {
       let outputFolderURL = self.outputFolderURL()
-      try FileManager.default.apollo_deleteFolder(at: outputFolderURL)
+      try FileManager.default.apollo.deleteFolder(at: outputFolderURL)
     } catch {
       XCTFail("Error deleting output folder!",
               file: file,
@@ -94,7 +107,7 @@ struct CodegenTestHelper {
     }
   }
   
-  static func downloadCLIIfNeeded(file: StaticString = #file,
+  static func downloadCLIIfNeeded(file: StaticString = #filePath,
                                   line: UInt = #line) {
     do {
       let cliFolderURL = self.cliFolderURL()
@@ -106,11 +119,11 @@ struct CodegenTestHelper {
     }
   }
   
-  static func deleteExistingApolloFolder(file: StaticString = #file,
+  static func deleteExistingApolloFolder(file: StaticString = #filePath,
                                          line: UInt = #line) {
     do {
       let apolloFolderURL = self.apolloFolderURL()
-      try FileManager.default.apollo_deleteFolder(at: apolloFolderURL)
+      try FileManager.default.apollo.deleteFolder(at: apolloFolderURL)
     } catch {
       XCTFail("Error deleting Apollo folder: \(error)",
               file: file,

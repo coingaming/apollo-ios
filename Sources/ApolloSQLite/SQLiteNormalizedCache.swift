@@ -7,7 +7,6 @@ import Apollo
 public enum SQLiteNormalizedCacheError: Error {
   case invalidRecordEncoding(record: String)
   case invalidRecordShape(object: Any)
-  case invalidRecordValue(value: Any)
 }
 
 /// A `NormalizedCache` implementation which uses a SQLite database to store data.
@@ -29,6 +28,18 @@ public final class SQLiteNormalizedCache {
   public init(fileURL: URL, shouldVacuumOnClear: Bool = false) throws {
     self.shouldVacuumOnClear = shouldVacuumOnClear
     self.db = try Connection(.uri(fileURL.absoluteString), readonly: false)
+    try self.createTableIfNeeded()
+  }
+
+  ///
+  /// Initializer that takes the Connection to use
+  /// - Parameters:
+  ///   - db: The database Connection to use
+  ///   - shouldVacuumOnClear: If the database should also be `VACCUM`ed on clear to remove all traces of info. Defaults to `false` since this involves a performance hit, but this should be used if you are storing any Personally Identifiable Information in the cache.
+  /// - Throws: Any errors attempting to access the database
+  public init(db: Connection, shouldVacuumOnClear: Bool = false) throws {
+    self.shouldVacuumOnClear = shouldVacuumOnClear
+    self.db = db
     try self.createTableIfNeeded()
   }
 
@@ -118,7 +129,7 @@ extension SQLiteNormalizedCache: NormalizedCache {
       result = .failure(error)
     }
 
-    DispatchQueue.apollo_returnResultAsyncIfNeeded(on: callbackQueue,
+    DispatchQueue.apollo.returnResultAsyncIfNeeded(on: callbackQueue,
                                                    action: completion,
                                                    result: result)
   }
@@ -141,7 +152,7 @@ extension SQLiteNormalizedCache: NormalizedCache {
       result = .failure(error)
     }
 
-    DispatchQueue.apollo_returnResultAsyncIfNeeded(on: callbackQueue,
+    DispatchQueue.apollo.returnResultAsyncIfNeeded(on: callbackQueue,
                                                    action: completion,
                                                    result: result)
   }
@@ -149,14 +160,18 @@ extension SQLiteNormalizedCache: NormalizedCache {
   public func clear(callbackQueue: DispatchQueue?, completion: ((Swift.Result<Void, Error>) -> Void)?) {
     let result: Swift.Result<Void, Error>
     do {
-      try self.clearRecords()
+      try clearImmediately()
       result = .success(())
     } catch {
       result = .failure(error)
     }
 
-    DispatchQueue.apollo_returnResultAsyncIfNeeded(on: callbackQueue,
+    DispatchQueue.apollo.returnResultAsyncIfNeeded(on: callbackQueue,
                                                    action: completion,
                                                    result: result)
+  }
+
+  public func clearImmediately() throws {
+    try clearRecords()
   }
 }

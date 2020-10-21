@@ -4,6 +4,7 @@ import XCTest
 import ApolloTestSupport
 import ApolloSQLiteTestSupport
 import StarWarsAPI
+import SQLite
 
 class CachePersistenceTests: XCTestCase {
 
@@ -20,7 +21,7 @@ class CachePersistenceTests: XCTestCase {
             "__typename": "Human"
           ]
         ]
-        ])
+      ], store: store)
       let client = ApolloClient(networkTransport: networkTransport, store: store)
 
       let networkExpectation = self.expectation(description: "Fetching query from network")
@@ -59,6 +60,10 @@ class CachePersistenceTests: XCTestCase {
     }
   }
 
+  func testPassInConnectionDoesNotThrow() {
+    XCTAssertNoThrow(try SQLiteNormalizedCache(db: Connection()))
+  }
+
   func testClearCache() {
     let query = HeroNameQuery()
     let sqliteFileURL = SQLiteTestCacheProvider.temporarySQLiteFileURL()
@@ -72,7 +77,7 @@ class CachePersistenceTests: XCTestCase {
             "__typename": "Human"
           ]
         ]
-        ])
+      ], store: store)
       let client = ApolloClient(networkTransport: networkTransport, store: store)
 
       let networkExpectation = self.expectation(description: "Fetching query from network")

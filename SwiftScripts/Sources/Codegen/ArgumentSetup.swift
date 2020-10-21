@@ -4,14 +4,20 @@ import TSCUtility
 
 enum Target {
     case starWars
+    case starWarsSwiftCodegen
     case gitHub
+    case upload
     
     init?(name: String) {
         switch name {
         case "StarWars":
             self = .starWars
+        case "StarWars-SwiftCodegen":
+            self = .starWarsSwiftCodegen
         case "GitHub":
             self = .gitHub
+        case "Upload":
+            self = .upload
         default:
             return nil
         }
@@ -21,26 +27,42 @@ enum Target {
         switch self {
         case .gitHub:
             return sourceRootURL
-                .appendingPathComponent("Sources")
-                .appendingPathComponent("GitHubAPI")
-        case .starWars:
+                .apollo.childFolderURL(folderName: "Sources")
+                .apollo.childFolderURL(folderName: "GitHubAPI")
+        case .starWars,
+             .starWarsSwiftCodegen:
             return sourceRootURL
-                .appendingPathComponent("Sources")
-                .appendingPathComponent("StarWarsAPI")
+                .apollo.childFolderURL(folderName: "Sources")
+                .apollo.childFolderURL(folderName: "StarWarsAPI")
+        case .upload:
+            return sourceRootURL
+            .apollo.childFolderURL(folderName: "Sources")
+            .apollo.childFolderURL(folderName: "UploadAPI")
         }
     }
     
     func options(fromSourceRoot sourceRootURL: Foundation.URL) -> ApolloCodegenOptions {
         let targetRootURL = self.targetRootURL(fromSourceRoot: sourceRootURL)
         switch self {
+        case .upload:
+            return ApolloCodegenOptions(targetRootURL: targetRootURL)
         case .starWars:
             return ApolloCodegenOptions(targetRootURL: targetRootURL)
+        case .starWarsSwiftCodegen:
+            let jsonOutputFileURL = try!  targetRootURL.apollo.childFileURL(fileName: "API.json")
+            let operationIDsURL = try! targetRootURL.apollo.childFileURL(fileName: "operationIDs.json")
+            let json = try! targetRootURL.apollo.childFileURL(fileName: "schema.json")
+            
+            return ApolloCodegenOptions(codegenEngine: .swiftExperimental,
+                                        operationIDsURL: operationIDsURL,
+                                        outputFormat: .singleFile(atFileURL: jsonOutputFileURL),
+                                        urlToSchemaFile: json)
         case .gitHub:
-            let json = targetRootURL.appendingPathComponent("schema.json")
-            let outputFileURL = targetRootURL.appendingPathComponent("API.swift")
-            let operationIDsURL = targetRootURL.appendingPathComponent("operationIDs.json")
-
-            return ApolloCodegenOptions(mergeInFieldsFromFragmentSpreads: true,
+            let json = try! targetRootURL.apollo.childFileURL(fileName: "schema.docs.graphql")
+            let outputFileURL = try!  targetRootURL.apollo.childFileURL(fileName: "API.swift")
+            let operationIDsURL = try! targetRootURL.apollo.childFileURL(fileName: "operationIDs.json")
+            return ApolloCodegenOptions(includes: "Queries/**/*.graphql",
+                                        mergeInFieldsFromFragmentSpreads: true,
                                         operationIDsURL: operationIDsURL,
                                         outputFormat: .singleFile(atFileURL: outputFileURL),
                                         suppressSwiftMultilineStringLiterals: true,

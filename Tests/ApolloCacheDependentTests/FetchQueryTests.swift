@@ -30,7 +30,7 @@ class FetchQueryTests: XCTestCase, CacheTesting {
             "__typename": "Human"
           ]
         ]
-        ])
+      ], store: store)
       
       let client = ApolloClient(networkTransport: networkTransport, store: store)
       
@@ -72,7 +72,7 @@ class FetchQueryTests: XCTestCase, CacheTesting {
             "__typename": "Human"
           ]
         ]
-        ])
+      ], store: store)
       
       let client = ApolloClient(networkTransport: networkTransport, store: store)
       
@@ -120,7 +120,7 @@ class FetchQueryTests: XCTestCase, CacheTesting {
             "__typename": "Human"
           ]
         ]
-        ])
+      ], store: store)
       
       let client = ApolloClient(networkTransport: networkTransport, store: store)
       
@@ -161,7 +161,7 @@ class FetchQueryTests: XCTestCase, CacheTesting {
             "__typename": "Human"
           ]
         ]
-        ])
+      ], store: store)
       
       let client = ApolloClient(networkTransport: networkTransport, store: store)
       
@@ -203,7 +203,7 @@ class FetchQueryTests: XCTestCase, CacheTesting {
             "__typename": "Human"
           ]
         ]
-        ])
+      ], store: store)
       
       let client = ApolloClient(networkTransport: networkTransport, store: store)
       
@@ -245,7 +245,7 @@ class FetchQueryTests: XCTestCase, CacheTesting {
             "__typename": "Human"
           ]
         ]
-        ])
+        ], store: store)
       
       let client = ApolloClient(networkTransport: networkTransport, store: store)
       
@@ -324,7 +324,7 @@ class FetchQueryTests: XCTestCase, CacheTesting {
             "__typename": "Human"
           ]
         ]
-        ])
+        ], store: store)
       
       let client = ApolloClient(networkTransport: networkTransport, store: store)
       
@@ -364,17 +364,17 @@ class FetchQueryTests: XCTestCase, CacheTesting {
     
     let query = HeroNameQuery()
     
-    let networkTransport = MockNetworkTransport(body: [
-      "data": [
-        "hero": [
-          "name": "Luke Skywalker",
-          "__typename": "Human"
-        ]
-      ]
-      ])
-    
     withCache { (cache) in
       let store = ApolloStore(cache: cache)
+      let networkTransport = MockNetworkTransport(body: [
+        "data": [
+          "hero": [
+            "name": "Luke Skywalker",
+            "__typename": "Human"
+          ]
+        ]
+      ], store: store)
+      
       let client = ApolloClient(networkTransport: networkTransport, store: store)
       
       let expectation = self.expectation(description: "Fetching query")
@@ -391,6 +391,8 @@ class FetchQueryTests: XCTestCase, CacheTesting {
   
   func testThreadedCache() throws {
     let cache = InMemoryNormalizedCache()
+    let store = ApolloStore(cache: cache)
+    let store2 = ApolloStore(cache: cache)
     
     let networkTransport1 = MockNetworkTransport(body: [
       "data": [
@@ -404,7 +406,7 @@ class FetchQueryTests: XCTestCase, CacheTesting {
           ]
         ]
       ]
-    ])
+    ], store: store)
     
     let networkTransport2 = MockNetworkTransport(body: [
       "data": [
@@ -418,10 +420,7 @@ class FetchQueryTests: XCTestCase, CacheTesting {
           ]
         ]
       ]
-    ])
-    
-    let store = ApolloStore(cache: cache)
-    let store2 = ApolloStore(cache: cache)
+    ], store: store2)
     
     let client1 = ApolloClient(networkTransport: networkTransport1, store: store)
     let client2 = ApolloClient(networkTransport: networkTransport2, store: store2)
@@ -438,7 +437,7 @@ class FetchQueryTests: XCTestCase, CacheTesting {
         let watcher =
           client1.watch(
           query: HeroAndFriendsNamesWithIDsQuery(), cachePolicy: .returnCacheDataAndFetch) { result in
-            if result.value?.source == .some(.server) {
+            if result.apollo.value?.source == .some(.server) {
               group.leave()
             }
         }
@@ -453,7 +452,7 @@ class FetchQueryTests: XCTestCase, CacheTesting {
         let watcher =
           client2.watch(
           query: HeroAndFriendsNamesWithIDsQuery(), cachePolicy: .returnCacheDataAndFetch) { result in
-            if result.value?.source == .some(.server) {
+            if result.apollo.value?.source == .some(.server) {
               group.leave()
             }
         }
@@ -465,7 +464,7 @@ class FetchQueryTests: XCTestCase, CacheTesting {
       
       group.enter()
       DispatchQueue.global().async {
-        _ = client1.clearCache() { _ in
+        client1.clearCache() { _ in
           group.leave()
         }
       }

@@ -19,7 +19,7 @@ class CLIExtractorTests: XCTestCase {
   
   private func checkSHASUMFileContentsDirectly(at url: URL,
                                                match expected: String,
-                                               file: StaticString = #file,
+                                               file: StaticString = #filePath,
                                                line: UInt = #line) {
     guard let contents = try? String(contentsOf: url, encoding: .utf8) else {
       XCTFail("Could not load file at \(url.path)",
@@ -38,7 +38,7 @@ class CLIExtractorTests: XCTestCase {
   private func validateSHASUMFile(shouldBeValid: Bool,
                                   apolloFolderURL: URL,
                                   match expected: String,
-                                  file: StaticString = #file,
+                                  file: StaticString = #filePath,
                                   line: UInt = #line) {
     do {
       let isValid = try CLIExtractor.validateSHASUMInExtractedFile(apolloFolderURL: apolloFolderURL, expected: expected)
@@ -53,15 +53,15 @@ class CLIExtractorTests: XCTestCase {
     }
   }
   
-  func validateCLIIsExtractedWithRealSHASUM(file: StaticString = #file,
+  func validateCLIIsExtractedWithRealSHASUM(file: StaticString = #filePath,
                                             line: UInt = #line) {
     let binaryFolderURL = CodegenTestHelper.binaryFolderURL()
-    XCTAssertTrue(FileManager.default.apollo_folderExists(at: binaryFolderURL),
+    XCTAssertTrue(FileManager.default.apollo.folderExists(at: binaryFolderURL),
                   "Binary folder doesn't exist at \(binaryFolderURL)",
                   file: file,
                   line: line)
     let binaryURL = ApolloFilePathHelper.binaryURL(fromBinaryFolder: binaryFolderURL)
-    XCTAssertTrue(FileManager.default.apollo_fileExists(at: binaryURL),
+    XCTAssertTrue(FileManager.default.apollo.fileExists(at: binaryURL),
                   "Binary doesn't exist at \(binaryURL)",
                   file: file,
                   line: line)
@@ -100,7 +100,7 @@ class CLIExtractorTests: XCTestCase {
     // Check that the binary hasn't already been extracted
     // (it should be getting deleted in `setUp`)
     let binaryFolderURL = CodegenTestHelper.binaryFolderURL()
-    XCTAssertFalse(FileManager.default.apollo_folderExists(at: binaryFolderURL))
+    XCTAssertFalse(FileManager.default.apollo.folderExists(at: binaryFolderURL))
     
     // Actually extract the CLI
     let cliFolderURL = CodegenTestHelper.cliFolderURL()
@@ -145,7 +145,7 @@ class CLIExtractorTests: XCTestCase {
   func testFolderExistsButMissingSHASUMFileReExtractionWorks() throws {
     // Make sure there is an apollo folder but no `.shasum` file
     let apolloFolder = CodegenTestHelper.apolloFolderURL()
-    try FileManager.default.apollo_createFolderIfNeeded(at: apolloFolder)
+    try FileManager.default.apollo.createFolderIfNeeded(at: apolloFolder)
     
     let cliFolderURL = CodegenTestHelper.cliFolderURL()
     
@@ -160,7 +160,7 @@ class CLIExtractorTests: XCTestCase {
     
     // Make sure the binary folder's not there
     let binaryFolderURL = CodegenTestHelper.binaryFolderURL()
-    XCTAssertFalse(FileManager.default.apollo_folderExists(at: binaryFolderURL))
+    XCTAssertFalse(FileManager.default.apollo.folderExists(at: binaryFolderURL))
     
     // Re-extract and now everything should be there
     let cliFolderURL = CodegenTestHelper.cliFolderURL()
@@ -170,22 +170,22 @@ class CLIExtractorTests: XCTestCase {
   
   func testMissingSHASUMFileButCorrectZipFileCreatesSHASUMFile() throws {
     let shasumFileURL = CodegenTestHelper.shasumFileURL()
-    try FileManager.default.apollo_deleteFile(at: shasumFileURL)
+    try FileManager.default.apollo.deleteFile(at: shasumFileURL)
     
-    XCTAssertFalse(FileManager.default.apollo_fileExists(at: shasumFileURL))
+    XCTAssertFalse(FileManager.default.apollo.fileExists(at: shasumFileURL))
     
     let cliFolderURL = CodegenTestHelper.cliFolderURL()
     let zipFileURL = ApolloFilePathHelper.zipFileURL(fromCLIFolder: cliFolderURL)
     
-    XCTAssertTrue(FileManager.default.apollo_fileExists(at: zipFileURL))
+    XCTAssertTrue(FileManager.default.apollo.fileExists(at: zipFileURL))
     
     let binaryURL = try CLIExtractor.extractCLIIfNeeded(from: cliFolderURL)
     
     /// Was the binary extracted?
-    XCTAssertTrue(FileManager.default.apollo_folderExists(at: binaryURL))
+    XCTAssertTrue(FileManager.default.apollo.folderExists(at: binaryURL))
     
     /// Did the SHASUM file get created?
-    XCTAssertTrue(FileManager.default.apollo_fileExists(at: shasumFileURL))
+    XCTAssertTrue(FileManager.default.apollo.fileExists(at: shasumFileURL))
     self.validateCLIIsExtractedWithRealSHASUM()
   }
 }

@@ -6,30 +6,48 @@
 //
 
 import Foundation
+import Apollo
+import ApolloCore
 
-public final class MockURLSession: URLSession {
-  public private (set) var lastRequest: URLRequest?
+public final class MockURLSessionClient: URLSessionClient {
+
+  public private (set) var lastRequest: Atomic<URLRequest?> = Atomic(nil)
 
   public var data: Data?
   public var response: HTTPURLResponse?
   public var error: Error?
 
-  override public func dataTask(with request: URLRequest) -> URLSessionDataTask {
-    lastRequest = request
-    return URLSessionDataTaskMock()
-  }
+  public override func sendRequest(_ request: URLRequest,
+                                   rawTaskCompletionHandler: URLSessionClient.RawCompletion? = nil,
+                                   completion: @escaping URLSessionClient.Completion) -> URLSessionTask {
+    self.lastRequest.value = request
+    rawTaskCompletionHandler?(self.data, self.response, self.error)
+    
   
-  override public func dataTask(with request: URLRequest, completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) -> URLSessionDataTask {
-    lastRequest = request
-    if let response = response {
-      completionHandler(data, response, error)
+    let mockTask = URLSessionDataTaskMock()
+    
+    if let error = error {
+      completion(.failure(error))
+    } else {
+      guard let data = self.data else {
+        completion(.failure(URLSessionClientError.dataForRequestNotFound(request: request)))
+        return mockTask
+      }
+      
+      guard let response = self.response else {
+        completion(.failure(URLSessionClientError.noHTTPResponse(request: request)))
+        return mockTask
+      }
+      
+      completion(.success((data, response)))
     }
-    return URLSessionDataTaskMock()
+    
+    return mockTask
   }
 }
 
 private final class URLSessionDataTaskMock: URLSessionDataTask {
   override func resume() {
-
+    // No-op
   }
 }

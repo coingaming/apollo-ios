@@ -5,37 +5,49 @@ import StarWarsAPI
 
 
 protocol TestConfig {
-  func network() -> HTTPNetworkTransport
+  func network(store: ApolloStore) -> NetworkTransport
 }
 
 class DefaultConfig: TestConfig {
-  func network() -> HTTPNetworkTransport {
-    return HTTPNetworkTransport(url: URL(string: "http://localhost:8080/graphql")!)
+  
+  func transport(with store: ApolloStore) -> NetworkTransport {
+    let provider = LegacyInterceptorProvider(store: store)
+    return RequestChainNetworkTransport(interceptorProvider: provider,
+                                        endpointURL: TestURL.starWarsServer.url)
+  }
+  
+  func network(store: ApolloStore) -> NetworkTransport {
+    return transport(with: store)
   }
 }
 
 class APQsConfig: TestConfig {
-  func network() -> HTTPNetworkTransport {
-    return HTTPNetworkTransport(url: URL(string: "http://localhost:8080/graphql")!,
-                                enableAutoPersistedQueries: true)
+  
+  func transport(with store: ApolloStore) -> NetworkTransport {
+    let provider = LegacyInterceptorProvider(store: store)
+    return RequestChainNetworkTransport(interceptorProvider: provider,
+                                        endpointURL: TestURL.starWarsServer.url,
+                                        autoPersistQueries: true)
+  }
+  
+  func network(store: ApolloStore) -> NetworkTransport {
+    return transport(with: store)
   }
 }
 
-class APQsWithGetMethodConfig: TestConfig, HTTPNetworkTransportRetryDelegate{
-  var alreadyRetried = false
-  func networkTransport(_ networkTransport: HTTPNetworkTransport, receivedError error: Error, for request: URLRequest, response: URLResponse?, retryHandler: @escaping (Bool) -> Void) {
-    retryHandler(!alreadyRetried)
-    alreadyRetried = true
+class APQsWithGetMethodConfig: TestConfig {
+  
+  func transport(with store: ApolloStore) -> NetworkTransport {
+    let provider = LegacyInterceptorProvider(store: store)
+    return RequestChainNetworkTransport(interceptorProvider: provider,
+                                        endpointURL: TestURL.starWarsServer.url,
+                                        autoPersistQueries: true,
+                                        useGETForPersistedQueryRetry: true)
   }
   
-  func network() -> HTTPNetworkTransport {
-    let transport = HTTPNetworkTransport(url: URL(string: "http://localhost:8080/graphql")!,
-                                enableAutoPersistedQueries: true,
-                                useGETForPersistedQueryRetry: true)
-    transport.delegate = self
-    return transport
+  func network(store: ApolloStore) -> NetworkTransport {
+    return transport(with: store)
   }
-  
 }
 
 class StarWarsServerAPQsGetMethodTests: StarWarsServerTests {
@@ -327,7 +339,7 @@ class StarWarsServerTests: XCTestCase, CacheTesting {
     withCache { (cache) in
       
       let store = ApolloStore(cache: cache)
-      let client = ApolloClient(networkTransport: config.network(), store: store)
+      let client = ApolloClient(networkTransport: config.network(store: store), store: store)
 
       let expectation = self.expectation(description: "Fetching query")
 
@@ -344,11 +356,7 @@ class StarWarsServerTests: XCTestCase, CacheTesting {
           
           completionHandler(data)
         case .failure(let error):
-          if let responseError = error as? GraphQLHTTPResponseError {
-            XCTFail("Response error: \(responseError.bodyDescription)")
-          } else {
-            XCTFail("Unexpected error: \(error)")
-          }
+          XCTFail("Unexpected error: \(error)")
         }
       }
       
@@ -360,7 +368,7 @@ class StarWarsServerTests: XCTestCase, CacheTesting {
     withCache { (cache) in
       
       let store = ApolloStore(cache: cache)
-      let client = ApolloClient(networkTransport: config.network(), store: store)
+      let client = ApolloClient(networkTransport: config.network(store: store), store: store)
 
       let expectation = self.expectation(description: "Performing mutation")
 

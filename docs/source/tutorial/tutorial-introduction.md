@@ -2,11 +2,11 @@
 title: "0. Introduction"
 ---
 
-Welcome! This tutorial demonstrates adding the Apollo iOS SDK to an app to communicate with a GraphQL server. It was prepared with the following tools:
+Welcome! This tutorial demonstrates adding the Apollo iOS SDK to an app to communicate with a GraphQL server. It is confirmed to work with the following tools:
 
-- Xcode 11.3
-- Swift 5.1
-- Apollo iOS SDK 0.24.0
+- Xcode 12.0
+- Swift 5.3
+- Apollo iOS SDK 0.34.0
 
 The tutorial assumes that you're using a Mac with Xcode installed. It also assumes some prior experience with iOS development.
 
