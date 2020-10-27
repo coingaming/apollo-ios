@@ -26,6 +26,8 @@ public class WebSocketTransport {
   public static var provider: ApolloWebSocketClient.Type = ApolloWebSocket.self
   public weak var delegate: WebSocketTransportDelegate?
 
+  public var token: String?
+
   let connectOnInit: Bool
   let reconnect: Atomic<Bool>
   var websocket: ApolloWebSocketClient
@@ -39,7 +41,6 @@ public class WebSocketTransport {
 
   private var queue: [Int: String] = [:]
   private var connectingPayload: GraphQLMap?
-  private var token: String?
 
   private var subscribers = [String: (Result<JSONObject, Error>) -> Void]()
   private var subscriptions : [String: String] = [:]
@@ -126,8 +127,7 @@ public class WebSocketTransport {
               allowSendingDuplicates: Bool = true,
               connectOnInit: Bool = true,
               connectingPayload: GraphQLMap? = [:],
-              requestBodyCreator: RequestBodyCreator = ApolloRequestBodyCreator(),
-              token: String? = nil) {
+              requestBodyCreator: RequestBodyCreator = ApolloRequestBodyCreator()) {
     self.connectingPayload = connectingPayload
     self.sendOperationIdentifiers = sendOperationIdentifiers
     self.reconnect = Atomic(reconnect)
@@ -138,7 +138,6 @@ public class WebSocketTransport {
     self.clientName = clientName
     self.clientVersion = clientVersion
     self.connectOnInit = connectOnInit
-    self.token = token
     self.addApolloClientHeaders(to: &self.websocket.request)
     self.websocket.delegate = self
     if connectOnInit {
