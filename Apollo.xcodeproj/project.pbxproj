@@ -1801,7 +1801,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				9B7BDAFF23FDEF9E00ACD198 /* PBXTargetDependency */,
 				9B7BDAFC23FDEE9000ACD198 /* PBXTargetDependency */,
 				EB1C89AF2600C9FA0062A068 /* PBXTargetDependency */,
 			);
@@ -1844,7 +1843,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				9B7BDB1723FDF10300ACD198 /* PBXTargetDependency */,
 				9B7BDAF823FDEE8400ACD198 /* PBXTargetDependency */,
 			);
 			name = ApolloSQLite;
@@ -2603,10 +2601,6 @@
 			target = 9FC750431D2A532C00458D91 /* Apollo */;
 			targetProxy = 9B7BDAFB23FDEE9000ACD198 /* PBXContainerItemProxy */;
 		};
-		9B7BDAFF23FDEF9E00ACD198 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			productRef = 9B7BDAFE23FDEF9E00ACD198 /* Starscream */;
-		};
 		9B7BDB0123FDF01600ACD198 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 9B7BDA7C23FDE90400ACD198 /* ApolloWebSocket */;
@@ -2631,10 +2625,6 @@
 			isa = PBXTargetDependency;
 			target = 9F8A95771EC0FC1200304A2D /* ApolloTestSupport */;
 			targetProxy = 9B7BDB1123FDF08F00ACD198 /* PBXContainerItemProxy */;
-		};
-		9B7BDB1723FDF10300ACD198 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			productRef = 9B7BDB1623FDF10300ACD198 /* SQLite */;
 		};
 		9B7BDB1923FDF11C00ACD198 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -3243,17 +3233,6 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
-
-/* Begin XCSwiftPackageProductDependency section */
-		9B7BDAFE23FDEF9E00ACD198 /* Starscream */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = Starscream;
-		};
-		9B7BDB1623FDF10300ACD198 /* SQLite */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = SQLite;
-		};
-/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 9FC7503B1D2A532C00458D91 /* Project object */;
 }
