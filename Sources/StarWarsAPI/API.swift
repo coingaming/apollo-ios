@@ -347,6 +347,107 @@ public final class CreateAwesomeReviewMutation: GraphQLMutation {
   }
 }
 
+public final class CreateReviewWithNullFieldMutation: GraphQLMutation {
+  /// The raw GraphQL definition of this operation.
+  public let operationDefinition: String =
+    """
+    mutation CreateReviewWithNullField {
+      createReview(episode: JEDI, review: {stars: 10, commentary: null}) {
+        __typename
+        stars
+        commentary
+      }
+    }
+    """
+
+  public let operationName: String = "CreateReviewWithNullField"
+
+  public let operationIdentifier: String? = "a9600d176cd7e4671b8689f1d01fe79ea896932bfafb8a925af673f0e4111828"
+
+  public init() {
+  }
+
+  public struct Data: GraphQLSelectionSet {
+    public static let possibleTypes: [String] = ["Mutation"]
+
+    public static var selections: [GraphQLSelection] {
+      return [
+        GraphQLField("createReview", arguments: ["episode": "JEDI", "review": ["stars": 10, "commentary": nil]], type: .object(CreateReview.selections)),
+      ]
+    }
+
+    public private(set) var resultMap: ResultMap
+
+    public init(unsafeResultMap: ResultMap) {
+      self.resultMap = unsafeResultMap
+    }
+
+    public init(createReview: CreateReview? = nil) {
+      self.init(unsafeResultMap: ["__typename": "Mutation", "createReview": createReview.flatMap { (value: CreateReview) -> ResultMap in value.resultMap }])
+    }
+
+    public var createReview: CreateReview? {
+      get {
+        return (resultMap["createReview"] as? ResultMap).flatMap { CreateReview(unsafeResultMap: $0) }
+      }
+      set {
+        resultMap.updateValue(newValue?.resultMap, forKey: "createReview")
+      }
+    }
+
+    public struct CreateReview: GraphQLSelectionSet {
+      public static let possibleTypes: [String] = ["Review"]
+
+      public static var selections: [GraphQLSelection] {
+        return [
+          GraphQLField("__typename", type: .nonNull(.scalar(String.self))),
+          GraphQLField("stars", type: .nonNull(.scalar(Int.self))),
+          GraphQLField("commentary", type: .scalar(String.self)),
+        ]
+      }
+
+      public private(set) var resultMap: ResultMap
+
+      public init(unsafeResultMap: ResultMap) {
+        self.resultMap = unsafeResultMap
+      }
+
+      public init(stars: Int, commentary: String? = nil) {
+        self.init(unsafeResultMap: ["__typename": "Review", "stars": stars, "commentary": commentary])
+      }
+
+      public var __typename: String {
+        get {
+          return resultMap["__typename"]! as! String
+        }
+        set {
+          resultMap.updateValue(newValue, forKey: "__typename")
+        }
+      }
+
+      /// The number of stars this review gave, 1-5
+      public var stars: Int {
+        get {
+          return resultMap["stars"]! as! Int
+        }
+        set {
+          resultMap.updateValue(newValue, forKey: "stars")
+        }
+      }
+
+      /// Comment about the movie
+      public var commentary: String? {
+        get {
+          return resultMap["commentary"] as? String
+        }
+        set {
+          resultMap.updateValue(newValue, forKey: "commentary")
+        }
+      }
+    }
+  }
+}
+
 public final class HeroAndFriendsNamesQuery: GraphQLQuery {
   /// The raw GraphQL definition of this operation.
   public let operationDefinition: String =
@@ -1048,7 +1149,11 @@ public final class HeroAndFriendsNamesWithFragmentQuery: GraphQLQuery {
 
   public let operationIdentifier: String? = "1d3ad903dad146ff9d7aa09813fc01becd017489bfc1af8ffd178498730a5a26"
 
-  public var queryDocument: String { return operationDefinition.appending("\n" + FriendsNames.fragmentDefinition) }
+  public var queryDocument: String {
+    var document: String = operationDefinition
+    document.append("\n" + FriendsNames.fragmentDefinition)
+    return document
+  }
 
   public var episode: Episode?
 
@@ -1241,7 +1346,11 @@ public final class HeroAndFriendsNamesWithFragmentTwiceQuery: GraphQLQuery {
 
   public let operationIdentifier: String? = "e02ef22e116ad1ca35f0298ed3badb60eeb986203f0088575a5f137768c322fc"
 
-  public var queryDocument: String { return operationDefinition.appending("\n" + CharacterName.fragmentDefinition) }
+  public var queryDocument: String {
+    var document: String = operationDefinition
+    document.append("\n" + CharacterName.fragmentDefinition)
+    return document
+  }
 
   public var episode: Episode?
 
@@ -1636,7 +1745,11 @@ public final class HeroAppearsInWithFragmentQuery: GraphQLQuery {
 
   public let operationIdentifier: String? = "1756158bd7736d58db45a48d74a724fa1b6fdac735376df8afac8318ba5431fb"
 
-  public var queryDocument: String { return operationDefinition.appending("\n" + CharacterAppearsIn.fragmentDefinition) }
+  public var queryDocument: String {
+    var document: String = operationDefinition
+    document.append("\n" + CharacterAppearsIn.fragmentDefinition)
+    return document
+  }
 
   public var episode: Episode?
 
@@ -2299,7 +2412,11 @@ public final class HeroDetailsFragmentConditionalInclusionQuery: GraphQLQuery {
 
   public let operationIdentifier: String? = "b31aec7d977249e185922e4cc90318fd2c7197631470904bf937b0626de54b4f"
 
-  public var queryDocument: String { return operationDefinition.appending("\n" + HeroDetails.fragmentDefinition) }
+  public var queryDocument: String {
+    var document: String = operationDefinition
+    document.append("\n" + HeroDetails.fragmentDefinition)
+    return document
+  }
 
   public var includeDetails: Bool
 
@@ -3485,7 +3602,11 @@ public final class HeroDetailsWithFragmentQuery: GraphQLQuery {
 
   public let operationIdentifier: String? = "d20fa2f460058b8eec3d227f2f6088a708cf35dfa2b5ebf1414e34f9674ecfce"
 
-  public var queryDocument: String { return operationDefinition.appending("\n" + HeroDetails.fragmentDefinition) }
+  public var queryDocument: String {
+    var document: String = operationDefinition
+    document.append("\n" + HeroDetails.fragmentDefinition)
+    return document
+  }
 
   public var episode: Episode?
 
@@ -3801,7 +3922,11 @@ public final class DroidDetailsWithFragmentQuery: GraphQLQuery {
 
   public let operationIdentifier: String? = "7277e97563e911ac8f5c91d401028d218aae41f38df014d7fa0b037bb2a2e739"
 
-  public var queryDocument: String { return operationDefinition.appending("\n" + DroidDetails.fragmentDefinition) }
+  public var queryDocument: String {
+    var document: String = operationDefinition
+    document.append("\n" + DroidDetails.fragmentDefinition)
+    return document
+  }
 
   public var episode: Episode?
 
@@ -4432,7 +4557,11 @@ public final class HeroNameWithFragmentQuery: GraphQLQuery {
 
   public let operationIdentifier: String? = "b952f0054915a32ec524ac0dde0244bcda246649debe149f9e32e303e21c8266"
 
-  public var queryDocument: String { return operationDefinition.appending("\n" + CharacterName.fragmentDefinition) }
+  public var queryDocument: String {
+    var document: String = operationDefinition
+    document.append("\n" + CharacterName.fragmentDefinition)
+    return document
+  }
 
   public var episode: Episode?
 
@@ -4562,7 +4691,11 @@ public final class HeroNameWithFragmentAndIdQuery: GraphQLQuery {
 
   public let operationIdentifier: String? = "a87a0694c09d1ed245e9a80f245d96a5f57b20a4aa936ee9ab09b2a43620db02"
 
-  public var queryDocument: String { return operationDefinition.appending("\n" + CharacterName.fragmentDefinition) }
+  public var queryDocument: String {
+    var document: String = operationDefinition
+    document.append("\n" + CharacterName.fragmentDefinition)
+    return document
+  }
 
   public var episode: Episode?
 
@@ -4686,6 +4819,118 @@ public final class HeroNameWithFragmentAndIdQuery: GraphQLQuery {
   }
 }
 
+public final class HeroNameAndAppearsInQuery: GraphQLQuery {
+  /// The raw GraphQL definition of this operation.
+  public let operationDefinition: String =
+    """
+    query HeroNameAndAppearsIn($episode: Episode) {
+      hero(episode: $episode) {
+        __typename
+        name
+        appearsIn
+      }
+    }
+    """
+
+  public let operationName: String = "HeroNameAndAppearsIn"
+
+  public let operationIdentifier: String? = "f714414a2002404f9943490c8cc9c1a7b8ecac3ca229fa5a326186b43c1385ce"
+
+  public var episode: Episode?
+
+  public init(episode: Episode? = nil) {
+    self.episode = episode
+  }
+
+  public var variables: GraphQLMap? {
+    return ["episode": episode]
+  }
+
+  public struct Data: GraphQLSelectionSet {
+    public static let possibleTypes: [String] = ["Query"]
+
+    public static var selections: [GraphQLSelection] {
+      return [
+        GraphQLField("hero", arguments: ["episode": GraphQLVariable("episode")], type: .object(Hero.selections)),
+      ]
+    }
+
+    public private(set) var resultMap: ResultMap
+
+    public init(unsafeResultMap: ResultMap) {
+      self.resultMap = unsafeResultMap
+    }
+
+    public init(hero: Hero? = nil) {
+      self.init(unsafeResultMap: ["__typename": "Query", "hero": hero.flatMap { (value: Hero) -> ResultMap in value.resultMap }])
+    }
+
+    public var hero: Hero? {
+      get {
+        return (resultMap["hero"] as? ResultMap).flatMap { Hero(unsafeResultMap: $0) }
+      }
+      set {
+        resultMap.updateValue(newValue?.resultMap, forKey: "hero")
+      }
+    }
+
+    public struct Hero: GraphQLSelectionSet {
+      public static let possibleTypes: [String] = ["Human", "Droid"]
+
+      public static var selections: [GraphQLSelection] {
+        return [
+          GraphQLField("__typename", type: .nonNull(.scalar(String.self))),
+          GraphQLField("name", type: .nonNull(.scalar(String.self))),
+          GraphQLField("appearsIn", type: .nonNull(.list(.scalar(Episode.self)))),
+        ]
+      }
+
+      public private(set) var resultMap: ResultMap
+
+      public init(unsafeResultMap: ResultMap) {
+        self.resultMap = unsafeResultMap
+      }
+
+      public static func makeHuman(name: String, appearsIn: [Episode?]) -> Hero {
+        return Hero(unsafeResultMap: ["__typename": "Human", "name": name, "appearsIn": appearsIn])
+      }
+
+      public static func makeDroid(name: String, appearsIn: [Episode?]) -> Hero {
+        return Hero(unsafeResultMap: ["__typename": "Droid", "name": name, "appearsIn": appearsIn])
+      }
+
+      public var __typename: String {
+        get {
+          return resultMap["__typename"]! as! String
+        }
+        set {
+          resultMap.updateValue(newValue, forKey: "__typename")
+        }
+      }
+
+      /// The name of the character
+      public var name: String {
+        get {
+          return resultMap["name"]! as! String
+        }
+        set {
+          resultMap.updateValue(newValue, forKey: "name")
+        }
+      }
+
+      /// The movies this character appears in
+      public var appearsIn: [Episode?] {
+        get {
+          return resultMap["appearsIn"]! as! [Episode?]
+        }
+        set {
+          resultMap.updateValue(newValue, forKey: "appearsIn")
+        }
+      }
+    }
+  }
+}
+
 public final class HeroNameAndAppearsInWithFragmentQuery: GraphQLQuery {
   /// The raw GraphQL definition of this operation.
   public let operationDefinition: String =
@@ -4702,7 +4947,11 @@ public final class HeroNameAndAppearsInWithFragmentQuery: GraphQLQuery {
 
   public let operationIdentifier: String? = "0664fed3eb4f9fbdb44e8691d9e8fd11f2b3c097ba11327592054f602bd3ba1a"
 
-  public var queryDocument: String { return operationDefinition.appending("\n" + CharacterNameAndAppearsIn.fragmentDefinition) }
+  public var queryDocument: String {
+    var document: String = operationDefinition
+    document.append("\n" + CharacterNameAndAppearsIn.fragmentDefinition)
+    return document
+  }
 
   public var episode: Episode?
 

@@ -1,13 +1,8 @@
 import Foundation
 
 /// Represents a GraphQL response received from a server.
-public final class GraphQLResponse<Data: GraphQLSelectionSet>: Parseable {
-  
-  public init<T>(from data: Foundation.Data, decoder: T) throws where T : FlexibleDecoder {
-    // Giant hack to make all this conform to Parseable.
-    throw ParseableError.unsupportedInitializer
-  }
-  
+public final class GraphQLResponse<Data: GraphQLSelectionSet> {
+
   public let body: JSONObject
 
   private var rootKey: String
@@ -23,18 +18,13 @@ public final class GraphQLResponse<Data: GraphQLSelectionSet>: Parseable {
     self.rootKey = rootCacheKey(for: operation)
     self.variables = operation.variables
   }
-  
-  public func parseResultWithCompletion(cacheKeyForObject: CacheKeyForObject? = nil,
-                                        completion: (Result<(GraphQLResult<Data>, RecordSet?), Error>) -> Void) {
-    do {
-      let result = try parseResult(cacheKeyForObject: cacheKeyForObject).await()
-      completion(.success(result))
-    } catch {
-      completion(.failure(error))
-    }
-  }
 
-  func parseResult(cacheKeyForObject: CacheKeyForObject? = nil) throws -> Promise<(GraphQLResult<Data>, RecordSet?)>  {
+  /// Parses a response into a `GraphQLResult` and a `RecordSet`.
+  /// The result can be sent to a completion block for a request.
+  /// The `RecordSet` can be merged into a local cache.
+  /// - Parameter cacheKeyForObject: See `CacheKeyForObject`
+  /// - Returns: A `GraphQLResult` and a `RecordSet`.
+  public func parseResult(cacheKeyForObject: CacheKeyForObject? = nil) throws -> (GraphQLResult<Data>, RecordSet?) {
     let errors: [GraphQLError]?
 
     if let errorsEntry = body["errors"] as? [JSONObject] {
@@ -47,40 +37,38 @@ public final class GraphQLResponse<Data: GraphQLSelectionSet>: Parseable {
 
     if let dataEntry = body["data"] as? JSONObject {
       let executor = GraphQLExecutor { object, info in
-        return .result(.success(object[info.responseKeyForField]))
+        return object[info.responseKeyForField]
       }
-
+      
       executor.cacheKeyForObject = cacheKeyForObject
-
+      
       let mapper = GraphQLSelectionSetMapper<Data>()
       let normalizer = GraphQLResultNormalizer()
       let dependencyTracker = GraphQLDependencyTracker()
-
-      return firstly {
-        try executor.execute(selections: Data.selections,
-                             on: dataEntry,
-                             withKey: rootKey,
-                             variables: variables,
-                             accumulator: zip(mapper, normalizer, dependencyTracker))
-        }.map { (data, records, dependentKeys) in
-          (
-            GraphQLResult(data: data,
-                          extensions: extensions,
-                          errors: errors,
-                          source: .server,
-                          dependentKeys: dependentKeys),
-            records
-          )
-      }
+      
+      let (data, records, dependentKeys) = try executor.execute(selections: Data.selections,
+                                                                on: dataEntry,
+                                                                withKey: rootKey,
+                                                                variables: variables,
+                                                                accumulator: zip(mapper, normalizer, dependencyTracker))
+      
+      return (
+        GraphQLResult(data: data,
+                      extensions: extensions,
+                      errors: errors,
+                      source: .server,
+                      dependentKeys: dependentKeys),
+        records
+      )
     } else {
-      return Promise(fulfilled: (
+      return (
         GraphQLResult(data: nil,
                       extensions: extensions,
                       errors: errors,
                       source: .server,
                       dependentKeys: nil),
         nil
-      ))
+      )
     }
   }
 

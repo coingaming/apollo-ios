@@ -13,6 +13,7 @@ final class OperationMessage {
 
     case connectionAck = "connection_ack"              // Server -> Client
     case connectionError = "connection_error"          // Server -> Client
+    case startAck = "start_ack"                        // Server -> Client
     case connectionKeepAlive = "ka"                    // Server -> Client
     case data = "data"                                 // Server -> Client
     case error = "error"                               // Server -> Client
@@ -22,7 +23,7 @@ final class OperationMessage {
   }
 
   let serializationFormat = JSONSerializationFormat.self
-  var message: GraphQLMap = [:]
+  let message: GraphQLMap
   var serialized: String?
 
   var rawMessage : String? {
@@ -65,6 +66,7 @@ final class OperationMessage {
   }
 
   init(serialized: String) {
+    self.message = [:]
     self.serialized = serialized
   }
 
@@ -97,7 +99,7 @@ final class OperationMessage {
     var eventData : JSONObject?
 
     do {
-      let json = try JSONSerializationFormat.deserialize(data: data ) as? JSONObject
+      let json = try serializationFormat.deserialize(data: data) as? JSONObject
 
       eventData = json?["eventData"] as? JSONObject
       id = eventData?["id"] as? String
@@ -123,7 +125,6 @@ final class OperationMessage {
 }
 
 struct ParseHandler {
-
   let id: String?
   let eventName: String?
   let token: String?

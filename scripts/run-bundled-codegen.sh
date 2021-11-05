@@ -11,7 +11,7 @@ SCRIPT_DIR="$(dirname "$0")"
 
 # Get the SHASUM of the tarball
 ZIP_FILE="${SCRIPT_DIR}/apollo.tar.gz"
-ZIP_FILE_DOWNLOAD_URL="https://install.apollographql.com/legacy-cli/darwin/2.30.2"
+ZIP_FILE_DOWNLOAD_URL="https://install.apollographql.com/legacy-cli/darwin/2.33.6"
 SHASUM_FILE="${SCRIPT_DIR}/apollo/.shasum"
 APOLLO_DIR="${SCRIPT_DIR}"/apollo
 IS_RETRY="false"
@@ -52,13 +52,13 @@ remove_existing_apollo() {
 
 extract_cli() {
   tar xzf "${SCRIPT_DIR}"/apollo.tar.gz -C "${SCRIPT_DIR}"
-  
+
   echo "${SHASUM}" | tee "${SHASUM_FILE}"
 }
 
 validate_codegen_and_extract_if_needed() {
   # Make sure the SHASUM matches the release for this version
-  EXPECTED_SHASUM="d8ff4cd914708479317354721dee8b156acebddb79abbdcda4348a341ab6e53d"
+  EXPECTED_SHASUM="496b4de6a4a1f5a1c4a093c8d2378054ebf0dc19361a7dad847f82feeccad2be"
   update_shasum
 
   if [[ ${SHASUM} = ${EXPECTED_SHASUM}* ]]; then

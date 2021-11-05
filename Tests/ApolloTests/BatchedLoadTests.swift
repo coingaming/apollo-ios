@@ -12,6 +12,14 @@ private final class MockBatchedNormalizedCache: NormalizedCache {
     self.records = records
   }
   
+  public func loadRecords(forKeys keys: Set<CacheKey>) throws -> [CacheKey: Record] {
+    OSAtomicIncrement32(&numberOfBatchLoads)
+
+    return keys.reduce(into: [:]) { results, key in
+      results[key] = records[key]
+    }
+  }
+  
   func loadRecords(forKeys keys: [CacheKey],
                    callbackQueue: DispatchQueue?,
                    completion: @escaping (Result<[Record?], Error>) -> Void) {
@@ -23,6 +31,18 @@ private final class MockBatchedNormalizedCache: NormalizedCache {
                                                      action: completion,
                                                      result: .success(records))
     }
+  }
+  
+  func removeRecord(for key: CacheKey) throws {
+    records.removeRecord(for: key)
+  }
+
+  func removeRecords(matching pattern: CacheKey) throws {
+    records.removeRecords(matching: pattern)
+  }
+  
+  func merge(records: RecordSet) throws -> Set<CacheKey> {
+    return self.records.merge(records: records)
   }
   
   func merge(records: RecordSet,
@@ -45,7 +65,7 @@ private final class MockBatchedNormalizedCache: NormalizedCache {
     }
   }
   
-  func clearImmediately() {
+  func clear() throws {
     records.clear()
   }
 }
@@ -57,11 +77,11 @@ class BatchedLoadTests: XCTestCase {
       Record(key: "Drone_\(number)", ["__typename": "Droid", "name": "Droid #\(number)"])
     }
     
-    records.insert(Record(key: "QUERY_ROOT", ["hero": Reference(key: "2001")]))
+    records.insert(Record(key: "QUERY_ROOT", ["hero": CacheReference(key: "2001")]))
     records.insert(Record(key: "2001", [
       "name": "R2-D2",
       "__typename": "Droid",
-      "friends": drones.map { Reference(key: $0.key) }
+      "friends": drones.map { CacheReference(key: $0.key) }
     ]))
     records.insert(contentsOf: drones)
     
@@ -100,14 +120,14 @@ class BatchedLoadTests: XCTestCase {
   
   func testParallelLoadsUseIndependentBatching() {
     let records: RecordSet = [
-      "QUERY_ROOT": ["hero": Reference(key: "2001")],
+      "QUERY_ROOT": ["hero": CacheReference(key: "2001")],
       "2001": [
         "name": "R2-D2",
         "__typename": "Droid",
         "friends": [
-          Reference(key: "1000"),
-          Reference(key: "1002"),
-          Reference(key: "1003")
+          CacheReference(key: "1000"),
+          CacheReference(key: "1002"),
+          CacheReference(key: "1003")
         ]
       ],
       "1000": ["__typename": "Human", "name": "Luke Skywalker"],

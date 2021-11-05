@@ -32,7 +32,7 @@ class InterceptorTests: XCTestCase {
     let network = RequestChainNetworkTransport(interceptorProvider: testProvider,
                                                endpointURL: TestURL.mockServer.url)
     
-    let expectation = self.expectation(description: "Reqeust sent")
+    let expectation = self.expectation(description: "Request sent")
     
     let operation = HeroNameQuery()
     _ = network.send(operation: operation) { result in
@@ -88,7 +88,7 @@ class InterceptorTests: XCTestCase {
           MaxRetryInterceptor(maxRetriesAllowed: self.retryCount),
           self.testInterceptor,
           NetworkFetchInterceptor(client: self.mockClient),
-          LegacyParsingInterceptor(),
+          JSONResponseParsingInterceptor(),
         ]
       }
     }
@@ -97,7 +97,7 @@ class InterceptorTests: XCTestCase {
     let network = RequestChainNetworkTransport(interceptorProvider: testProvider,
                                                endpointURL: TestURL.mockServer.url)
     
-    let expectation = self.expectation(description: "Reqeust sent")
+    let expectation = self.expectation(description: "Request sent")
     
     let operation = HeroNameQuery()
     _ = network.send(operation: operation) { result in
@@ -117,9 +117,9 @@ class InterceptorTests: XCTestCase {
     self.wait(for: [expectation], timeout: 1)
   }
   
-  // MARK: - Legacy Parsing Interceptor
+  // MARK: - JSON Response Parsing Interceptor
   
-  func testLegacyParsingInterceptorFailsWithEmptyData() {
+  func testJSONResponseParsingInterceptorFailsWithEmptyData() {
     class TestProvider: InterceptorProvider {
       let mockClient: MockURLSessionClient = {
         let client = MockURLSessionClient()
@@ -134,7 +134,7 @@ class InterceptorTests: XCTestCase {
       func interceptors<Operation: GraphQLOperation>(for operation: Operation) -> [ApolloInterceptor] {
         [
           NetworkFetchInterceptor(client: self.mockClient),
-          LegacyParsingInterceptor(),
+          JSONResponseParsingInterceptor(),
         ]
       }
     }
@@ -142,7 +142,7 @@ class InterceptorTests: XCTestCase {
     let network = RequestChainNetworkTransport(interceptorProvider: TestProvider(),
                                                endpointURL: TestURL.mockServer.url)
     
-    let expectation = self.expectation(description: "Reqeust sent")
+    let expectation = self.expectation(description: "Request sent")
     
     _ = network.send(operation: HeroNameQuery()) { result in
       defer {
@@ -154,7 +154,7 @@ class InterceptorTests: XCTestCase {
         XCTFail("This should not have succeeded")
       case .failure(let error):
         switch error {
-        case LegacyParsingInterceptor.LegacyParsingError.couldNotParseToLegacyJSON(let data):
+        case JSONResponseParsingInterceptor.JSONResponseParsingError.couldNotParseToJSON(let data):
           XCTAssertTrue(data.isEmpty)
         default:
           XCTFail("Unexpected error type: \(error.localizedDescription)")
@@ -183,7 +183,7 @@ class InterceptorTests: XCTestCase {
         [
           NetworkFetchInterceptor(client: self.mockClient),
           ResponseCodeInterceptor(),
-          LegacyParsingInterceptor()
+          JSONResponseParsingInterceptor()
         ]
       }
     }
@@ -191,7 +191,7 @@ class InterceptorTests: XCTestCase {
     let network = RequestChainNetworkTransport(interceptorProvider: TestProvider(),
                                                endpointURL: TestURL.mockServer.url)
     
-    let expectation = self.expectation(description: "Reqeust sent")
+    let expectation = self.expectation(description: "Request sent")
     
     _ = network.send(operation: HeroNameQuery()) { result in
       defer {
@@ -203,7 +203,7 @@ class InterceptorTests: XCTestCase {
         XCTFail("This should not have succeeded")
       case .failure(let error):
         switch error {
-        case LegacyParsingInterceptor.LegacyParsingError.couldNotParseToLegacyJSON(let data):
+        case JSONResponseParsingInterceptor.JSONResponseParsingError.couldNotParseToJSON(let data):
           XCTAssertTrue(data.isEmpty)
         default:
           XCTFail("Unexpected error type: \(error.localizedDescription)")
@@ -239,7 +239,7 @@ class InterceptorTests: XCTestCase {
         [
           NetworkFetchInterceptor(client: self.mockClient),
           ResponseCodeInterceptor(),
-          LegacyParsingInterceptor(),
+          JSONResponseParsingInterceptor(),
         ]
       }
     }
@@ -247,7 +247,7 @@ class InterceptorTests: XCTestCase {
     let network = RequestChainNetworkTransport(interceptorProvider: TestProvider(),
                                                endpointURL: TestURL.mockServer.url)
     
-    let expectation = self.expectation(description: "Reqeust sent")
+    let expectation = self.expectation(description: "Request sent")
     
     _ = network.send(operation: HeroNameQuery()) { result in
       defer {

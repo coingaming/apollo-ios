@@ -1,6 +1,6 @@
 import Foundation
 #if !COCOAPODS
-import ApolloCore
+import ApolloUtils
 #endif
 
 /// A chain that allows a single network request to be created and executed.
@@ -37,7 +37,7 @@ public class RequestChain: Cancellable {
   ///
   /// - Parameters:
   ///   - interceptors: The array of interceptors to use.
-  ///   - callbackQueue: The `DispatchQueue` to call back on when an error or result occurs. Defauls to `.main`.
+  ///   - callbackQueue: The `DispatchQueue` to call back on when an error or result occurs. Defaults to `.main`.
   public init(interceptors: [ApolloInterceptor],
               callbackQueue: DispatchQueue = .main) {
     self.interceptors = interceptors
@@ -111,7 +111,12 @@ public class RequestChain: Cancellable {
   
   /// Cancels the entire chain of interceptors.
   public func cancel() {
-    self.isCancelled.value = true
+    guard self.isNotCancelled else {
+      // Do not proceed, this chain has been cancelled.
+      return
+    }
+    
+    self.isCancelled.mutate { $0 = true }
     
     // If an interceptor adheres to `Cancellable`, it should have its in-flight work cancelled as well.
     for interceptor in self.interceptors {
@@ -121,7 +126,7 @@ public class RequestChain: Cancellable {
     }
   }
   
-  /// Restarts the request starting from the first inteceptor.
+  /// Restarts the request starting from the first interceptor.
   ///
   /// - Parameters:
   ///   - request: The request to retry
@@ -161,13 +166,14 @@ public class RequestChain: Cancellable {
       }
       return
     }
-    
-    
-    additionalHandler.handleErrorAsync(error: error,
-                                       chain: self,
-                                       request: request,
-                                       response: response,
-                                       completion: completion)
+
+    // Capture callback queue so it doesn't get reaped when `self` is dealloced
+    let callbackQueue = self.callbackQueue
+    additionalHandler.handleErrorAsync(error: error, chain: self, request: request, response: response) { result in
+      callbackQueue.async {
+        completion(result)
+      }
+    }
   }
   
   /// Handles a resulting value by returning it on the appropriate queue.

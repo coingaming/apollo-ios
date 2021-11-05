@@ -31,7 +31,7 @@ open class RequestChainNetworkTransport: NetworkTransport {
   ///   - endpointURL: The GraphQL endpoint URL to use.
   ///   - additionalHeaders: Any additional headers that should be automatically added to every request. Defaults to an empty dictionary.
   ///   - autoPersistQueries: Pass `true` if Automatic Persisted Queries should be used to send a query hash instead of the full query body by default. Defaults to `false`.
-  ///   - requestBodyCreator: The `RequestBodyCreator` object to use to build your `URLRequest`. Defaults to the providedd `ApolloRequestBodyCreator` implementation.
+  ///   - requestBodyCreator: The `RequestBodyCreator` object to use to build your `URLRequest`. Defaults to the provided `ApolloRequestBodyCreator` implementation.
   ///   - useGETForQueries: Pass `true` if you want to use `GET` instead of `POST` for queries, for example to take advantage of a CDN. Defaults to `false`.
   ///   - useGETForPersistedQueryRetry: Pass `true` to use `GET` instead of `POST` for a retry of a persisted query. Defaults to `false`. 
   public init(interceptorProvider: InterceptorProvider,
@@ -69,7 +69,7 @@ open class RequestChainNetworkTransport: NetworkTransport {
                 contextIdentifier: contextIdentifier,
                 clientName: self.clientName,
                 clientVersion: self.clientVersion,
-                additionalHeaders: additionalHeaders,
+                additionalHeaders: self.additionalHeaders,
                 cachePolicy: cachePolicy,
                 autoPersistQueries: self.autoPersistQueries,
                 useGETForQueries: self.useGETForQueries,
@@ -110,16 +110,20 @@ extension RequestChainNetworkTransport: UploadingNetworkTransport {
   /// - Parameters:
   ///   - operation: The operation to create a request for
   ///   - files: The files you wish to upload
+  ///   - manualBoundary: [optional] A manually set boundary for your upload request. Defaults to nil. 
   /// - Returns: The created request.
   open func constructUploadRequest<Operation: GraphQLOperation>(
     for operation: Operation,
-    with files: [GraphQLFile]) -> HTTPRequest<Operation> {
+    with files: [GraphQLFile],
+    manualBoundary: String? = nil) -> HTTPRequest<Operation> {
     
     UploadRequest(graphQLEndpoint: self.endpointURL,
                   operation: operation,
                   clientName: self.clientName,
                   clientVersion: self.clientVersion,
+                  additionalHeaders: self.additionalHeaders,
                   files: files,
+                  manualBoundary: manualBoundary,
                   requestBodyCreator: self.requestBodyCreator)
   }
   
