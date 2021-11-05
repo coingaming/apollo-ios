@@ -10,6 +10,8 @@
 		54DDB0921EA045870009DD99 /* InMemoryNormalizedCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54DDB0911EA045870009DD99 /* InMemoryNormalizedCache.swift */; };
 		5AC6CA4322AAF7B200B7C94D /* GraphQLHTTPMethod.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5AC6CA4222AAF7B200B7C94D /* GraphQLHTTPMethod.swift */; };
 		5BB2C0232380836100774170 /* VersionNumberTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BB2C0222380836100774170 /* VersionNumberTests.swift */; };
+		833A7FC72637319300F1DEFE /* SQLite.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 833A7FC62637319300F1DEFE /* SQLite.xcframework */; };
+		833A7FE62637319B00F1DEFE /* Starscream.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 833A7FE52637319B00F1DEFE /* Starscream.xcframework */; };
 		9B0E4718240AF6D70093BDA7 /* ASTVariableType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B0E4717240AF6D70093BDA7 /* ASTVariableType.swift */; };
 		9B0E471A240AFA060093BDA7 /* VariableToSwiftTypeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B0E4719240AFA060093BDA7 /* VariableToSwiftTypeTests.swift */; };
 		9B0E471C240B167C0093BDA7 /* String+Apollo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B0E471B240B167C0093BDA7 /* String+Apollo.swift */; };
@@ -79,7 +81,6 @@
 		9B68F03D240ED3B300E97318 /* ASTCondition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B68F03C240ED3B300E97318 /* ASTCondition.swift */; };
 		9B68F03F240F3B0E00E97318 /* CodeGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B68F03E240F3B0E00E97318 /* CodeGenerator.swift */; };
 		9B68F04A24130D6500E97318 /* EnumGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B68F04924130D6500E97318 /* EnumGenerator.swift */; };
-		9B68F04D2413239100E97318 /* Stencil in Frameworks */ = {isa = PBXBuildFile; productRef = 9B68F04C2413239100E97318 /* Stencil */; };
 		9B68F04F2413271D00E97318 /* EnumGenerationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B68F04E2413271D00E97318 /* EnumGenerationTests.swift */; };
 		9B68F0532415B1C800E97318 /* ExpectedEpisodeEnum.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B68F0522415B1C800E97318 /* ExpectedEpisodeEnum.swift */; };
 		9B68F0552416B33300E97318 /* LineByLineComparison.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B68F0542416B33300E97318 /* LineByLineComparison.swift */; };
@@ -105,13 +106,11 @@
 		9B7BDA9E23FDE94C00ACD198 /* OperationMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B7BDA9723FDE94C00ACD198 /* OperationMessage.swift */; };
 		9B7BDA9F23FDE94C00ACD198 /* ApolloWebSocket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B7BDA9823FDE94C00ACD198 /* ApolloWebSocket.swift */; };
 		9B7BDAA023FDE94C00ACD198 /* WebSocketTransport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B7BDA9923FDE94C00ACD198 /* WebSocketTransport.swift */; };
-		9B7BDAAC23FDEA7B00ACD198 /* Starscream in Frameworks */ = {isa = PBXBuildFile; productRef = 9B7BDAAB23FDEA7B00ACD198 /* Starscream */; };
 		9B7BDAD023FDEBE300ACD198 /* SQLiteSerialization.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B7BDACD23FDEBE300ACD198 /* SQLiteSerialization.swift */; };
 		9B7BDAD223FDEBE300ACD198 /* SQLiteNormalizedCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B7BDACF23FDEBE300ACD198 /* SQLiteNormalizedCache.swift */; };
 		9B7BDAD623FDEC9B00ACD198 /* CachePersistenceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B7BDAD423FDEC9B00ACD198 /* CachePersistenceTests.swift */; };
 		9B7BDAEF23FDED9700ACD198 /* TestCacheProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B7BDAEC23FDED9700ACD198 /* TestCacheProvider.swift */; };
 		9B7BDAF023FDED9700ACD198 /* ApolloSQLiteTestSupport.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B7BDAED23FDED9700ACD198 /* ApolloSQLiteTestSupport.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		9B7BDAF623FDEE2600ACD198 /* SQLite in Frameworks */ = {isa = PBXBuildFile; productRef = 9B7BDAF523FDEE2600ACD198 /* SQLite */; };
 		9B7BDAFA23FDEE8A00ACD198 /* Apollo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9FC750441D2A532C00458D91 /* Apollo.framework */; };
 		9B7BDAFD23FDEE9300ACD198 /* Apollo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9FC750441D2A532C00458D91 /* Apollo.framework */; };
 		9B7BDB0423FDF02200ACD198 /* StarWarsAPI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9FCE2CFA1E6C213D00E34457 /* StarWarsAPI.framework */; };
@@ -249,6 +248,7 @@
 		C377CCAB22D7992E00572E03 /* MultipartFormData.swift in Sources */ = {isa = PBXBuildFile; fileRef = C377CCAA22D7992E00572E03 /* MultipartFormData.swift */; };
 		D90F1AFB2479E57A007A1534 /* WebSocketTransportTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D90F1AF92479DEE5007A1534 /* WebSocketTransportTests.swift */; };
 		E86D8E05214B32FD0028EFE1 /* JSONTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E86D8E03214B32DA0028EFE1 /* JSONTests.swift */; };
+		EB1C89AC2600C9FA0062A068 /* ApolloCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9B68353E2463481A00337AE6 /* ApolloCore.framework */; };
 		F16D083C21EF6F7300C458B8 /* QueryFromJSONBuildingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F16D083B21EF6F7300C458B8 /* QueryFromJSONBuildingTests.swift */; };
 		F82E62E122BCD223000C311B /* AutomaticPersistedQueriesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F82E62E022BCD223000C311B /* AutomaticPersistedQueriesTests.swift */; };
 /* End PBXBuildFile section */
@@ -443,6 +443,13 @@
 			remoteGlobalIDString = 9FCE2CF91E6C213D00E34457;
 			remoteInfo = StarWarsAPI;
 		};
+		EB1C89AE2600C9FA0062A068 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 9FC7503B1D2A532C00458D91 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 9B68353D2463481A00337AE6;
+			remoteInfo = ApolloCore;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -463,6 +470,8 @@
 		54DDB0911EA045870009DD99 /* InMemoryNormalizedCache.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InMemoryNormalizedCache.swift; sourceTree = "<group>"; };
 		5AC6CA4222AAF7B200B7C94D /* GraphQLHTTPMethod.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GraphQLHTTPMethod.swift; sourceTree = "<group>"; };
 		5BB2C0222380836100774170 /* VersionNumberTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VersionNumberTests.swift; sourceTree = "<group>"; };
+		833A7FC62637319300F1DEFE /* SQLite.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = SQLite.xcframework; path = Carthage/Build/SQLite.xcframework; sourceTree = "<group>"; };
+		833A7FE52637319B00F1DEFE /* Starscream.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = Starscream.xcframework; path = Carthage/Build/Starscream.xcframework; sourceTree = "<group>"; };
 		90690D05224333DA00FC2E54 /* Apollo-Project-Debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "Apollo-Project-Debug.xcconfig"; sourceTree = "<group>"; };
 		90690D06224333DA00FC2E54 /* Apollo-Target-Framework.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "Apollo-Target-Framework.xcconfig"; sourceTree = "<group>"; };
 		90690D07224333DA00FC2E54 /* Apollo-Project-Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "Apollo-Project-Release.xcconfig"; sourceTree = "<group>"; };
@@ -532,7 +541,6 @@
 		9B518C88235F8AD4004C426D /* CLIDownloaderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CLIDownloaderTests.swift; sourceTree = "<group>"; };
 		9B518C8A235F8B05004C426D /* ApolloFilePathHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApolloFilePathHelper.swift; sourceTree = "<group>"; };
 		9B554CC3247DC29A002F452A /* TaskData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskData.swift; sourceTree = "<group>"; };
-		9B5A1EE3243284F300F066BB /* Package.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Package.swift; sourceTree = "<group>"; };
 		9B5A1EFB243528AA00F066BB /* InputObjectGenerationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputObjectGenerationTests.swift; sourceTree = "<group>"; };
 		9B5A1EFF2435356400F066BB /* ExpectedColorInputNoModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExpectedColorInputNoModifier.swift; sourceTree = "<group>"; };
 		9B60204E23FDFA9F00D0C8E0 /* SQLiteCacheTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SQLiteCacheTests.swift; sourceTree = "<group>"; };
@@ -763,6 +771,8 @@
 		C377CCAA22D7992E00572E03 /* MultipartFormData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultipartFormData.swift; sourceTree = "<group>"; };
 		D90F1AF92479DEE5007A1534 /* WebSocketTransportTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebSocketTransportTests.swift; sourceTree = "<group>"; };
 		E86D8E03214B32DA0028EFE1 /* JSONTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONTests.swift; sourceTree = "<group>"; };
+		EB1C89A42600C9840062A068 /* SQLite.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SQLite.framework; path = Carthage/Build/iOS/SQLite.framework; sourceTree = "<group>"; };
+		EB1C89A82600C9A60062A068 /* Starscream.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Starscream.framework; path = Carthage/Build/iOS/Starscream.framework; sourceTree = "<group>"; };
 		F16D083B21EF6F7300C458B8 /* QueryFromJSONBuildingTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QueryFromJSONBuildingTests.swift; sourceTree = "<group>"; };
 		F82E62E022BCD223000C311B /* AutomaticPersistedQueriesTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AutomaticPersistedQueriesTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -787,7 +797,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9B68F04D2413239100E97318 /* Stencil in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -806,7 +815,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				9B7BDAFD23FDEE9300ACD198 /* Apollo.framework in Frameworks */,
-				9B7BDAAC23FDEA7B00ACD198 /* Starscream in Frameworks */,
+				833A7FE62637319B00F1DEFE /* Starscream.xcframework in Frameworks */,
+				EB1C89AC2600C9FA0062A068 /* ApolloCore.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -825,7 +835,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				9B7BDAFA23FDEE8A00ACD198 /* Apollo.framework in Frameworks */,
-				9B7BDAF623FDEE2600ACD198 /* SQLite in Frameworks */,
+				833A7FC72637319300F1DEFE /* SQLite.xcframework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1151,6 +1161,10 @@
 		9B7BDAF923FDEE8A00ACD198 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				833A7FE52637319B00F1DEFE /* Starscream.xcframework */,
+				833A7FC62637319300F1DEFE /* SQLite.xcframework */,
+				EB1C89A82600C9A60062A068 /* Starscream.framework */,
+				EB1C89A42600C9840062A068 /* SQLite.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -1446,7 +1460,6 @@
 		9FC7503A1D2A532C00458D91 = {
 			isa = PBXGroup;
 			children = (
-				9B5A1EE3243284F300F066BB /* Package.swift */,
 				9B6835472463486200337AE6 /* ApolloCore */,
 				9FC750461D2A532C00458D91 /* Apollo */,
 				9B7B6F50233C26E400F32205 /* ApolloCodegenLib */,
@@ -1755,7 +1768,6 @@
 			);
 			name = ApolloCodegenLib;
 			packageProductDependencies = (
-				9B68F04C2413239100E97318 /* Stencil */,
 			);
 			productName = ApolloCodegenLib;
 			productReference = 9B7B6F47233C26D100F32205 /* ApolloCodegenLib.framework */;
@@ -1793,12 +1805,11 @@
 			buildRules = (
 			);
 			dependencies = (
-				9B7BDAFF23FDEF9E00ACD198 /* PBXTargetDependency */,
 				9B7BDAFC23FDEE9000ACD198 /* PBXTargetDependency */,
+				EB1C89AF2600C9FA0062A068 /* PBXTargetDependency */,
 			);
 			name = ApolloWebSocket;
 			packageProductDependencies = (
-				9B7BDAAB23FDEA7B00ACD198 /* Starscream */,
 			);
 			productName = ApolloWebSocket;
 			productReference = 9B7BDA7D23FDE90400ACD198 /* ApolloWebSocket.framework */;
@@ -1836,12 +1847,10 @@
 			buildRules = (
 			);
 			dependencies = (
-				9B7BDB1723FDF10300ACD198 /* PBXTargetDependency */,
 				9B7BDAF823FDEE8400ACD198 /* PBXTargetDependency */,
 			);
 			name = ApolloSQLite;
 			packageProductDependencies = (
-				9B7BDAF523FDEE2600ACD198 /* SQLite */,
 			);
 			productName = ApolloSQLite;
 			productReference = 9B7BDABF23FDEBB600ACD198 /* ApolloSQLite.framework */;
@@ -2087,9 +2096,6 @@
 			);
 			mainGroup = 9FC7503A1D2A532C00458D91;
 			packageReferences = (
-				9B7BDAAA23FDEA7B00ACD198 /* XCRemoteSwiftPackageReference "Starscream" */,
-				9B7BDAF423FDEE2600ACD198 /* XCRemoteSwiftPackageReference "SQLite.swift" */,
-				9B68F04B2413239100E97318 /* XCRemoteSwiftPackageReference "Stencil" */,
 			);
 			productRefGroup = 9FC750451D2A532C00458D91 /* Products */;
 			projectDirPath = "";
@@ -2214,7 +2220,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"$SRCROOT\"/scripts/ensure-no-build-settings-in-pbxproj.sh \"${PROJECT_FILE_PATH}\"\n";
+			shellScript = "#\"$SRCROOT\"/scripts/ensure-no-build-settings-in-pbxproj.sh \"${PROJECT_FILE_PATH}\"\n";
 		};
 		9FACA9BA1F42E67200AE2DBD /* Generate Apollo Client API */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -2599,10 +2605,6 @@
 			target = 9FC750431D2A532C00458D91 /* Apollo */;
 			targetProxy = 9B7BDAFB23FDEE9000ACD198 /* PBXContainerItemProxy */;
 		};
-		9B7BDAFF23FDEF9E00ACD198 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			productRef = 9B7BDAFE23FDEF9E00ACD198 /* Starscream */;
-		};
 		9B7BDB0123FDF01600ACD198 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 9B7BDA7C23FDE90400ACD198 /* ApolloWebSocket */;
@@ -2627,10 +2629,6 @@
 			isa = PBXTargetDependency;
 			target = 9F8A95771EC0FC1200304A2D /* ApolloTestSupport */;
 			targetProxy = 9B7BDB1123FDF08F00ACD198 /* PBXContainerItemProxy */;
-		};
-		9B7BDB1723FDF10300ACD198 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			productRef = 9B7BDB1623FDF10300ACD198 /* SQLite */;
 		};
 		9B7BDB1923FDF11C00ACD198 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -2706,6 +2704,11 @@
 			isa = PBXTargetDependency;
 			target = 9FCE2CF91E6C213D00E34457 /* StarWarsAPI */;
 			targetProxy = 9FCE2D071E6C254000E34457 /* PBXContainerItemProxy */;
+		};
+		EB1C89AF2600C9FA0062A068 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 9B68353D2463481A00337AE6 /* ApolloCore */;
+			targetProxy = EB1C89AE2600C9FA0062A068 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -2798,6 +2801,10 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 9B7BDAA423FDE98C00ACD198 /* ApolloWebSocket-Target-Framework.xcconfig */;
 			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Carthage/Build",
+				);
 			};
 			name = Debug;
 		};
@@ -2805,6 +2812,10 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 9B7BDAA423FDE98C00ACD198 /* ApolloWebSocket-Target-Framework.xcconfig */;
 			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Carthage/Build",
+				);
 			};
 			name = Release;
 		};
@@ -2812,6 +2823,10 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 9B7BDAA423FDE98C00ACD198 /* ApolloWebSocket-Target-Framework.xcconfig */;
 			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Carthage/Build",
+				);
 			};
 			name = PerformanceTesting;
 		};
@@ -2840,6 +2855,10 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 9B7BDAD823FDECB300ACD198 /* ApolloSQLite-Target-Framework.xcconfig */;
 			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Carthage/Build",
+				);
 			};
 			name = Debug;
 		};
@@ -2847,6 +2866,10 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 9B7BDAD823FDECB300ACD198 /* ApolloSQLite-Target-Framework.xcconfig */;
 			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Carthage/Build",
+				);
 			};
 			name = Release;
 		};
@@ -2854,6 +2877,10 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 9B7BDAD823FDECB300ACD198 /* ApolloSQLite-Target-Framework.xcconfig */;
 			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Carthage/Build",
+				);
 			};
 			name = PerformanceTesting;
 		};
@@ -3210,61 +3237,6 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
-
-/* Begin XCRemoteSwiftPackageReference section */
-		9B68F04B2413239100E97318 /* XCRemoteSwiftPackageReference "Stencil" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/stencilproject/Stencil.git";
-			requirement = {
-				kind = upToNextMinorVersion;
-				minimumVersion = 0.14.0;
-			};
-		};
-		9B7BDAAA23FDEA7B00ACD198 /* XCRemoteSwiftPackageReference "Starscream" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/daltoniam/Starscream.git";
-			requirement = {
-				kind = upToNextMinorVersion;
-				minimumVersion = 3.1.1;
-			};
-		};
-		9B7BDAF423FDEE2600ACD198 /* XCRemoteSwiftPackageReference "SQLite.swift" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/stephencelis/SQLite.swift.git";
-			requirement = {
-				kind = upToNextMinorVersion;
-				minimumVersion = 0.12.2;
-			};
-		};
-/* End XCRemoteSwiftPackageReference section */
-
-/* Begin XCSwiftPackageProductDependency section */
-		9B68F04C2413239100E97318 /* Stencil */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 9B68F04B2413239100E97318 /* XCRemoteSwiftPackageReference "Stencil" */;
-			productName = Stencil;
-		};
-		9B7BDAAB23FDEA7B00ACD198 /* Starscream */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 9B7BDAAA23FDEA7B00ACD198 /* XCRemoteSwiftPackageReference "Starscream" */;
-			productName = Starscream;
-		};
-		9B7BDAF523FDEE2600ACD198 /* SQLite */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 9B7BDAF423FDEE2600ACD198 /* XCRemoteSwiftPackageReference "SQLite.swift" */;
-			productName = SQLite;
-		};
-		9B7BDAFE23FDEF9E00ACD198 /* Starscream */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 9B7BDAAA23FDEA7B00ACD198 /* XCRemoteSwiftPackageReference "Starscream" */;
-			productName = Starscream;
-		};
-		9B7BDB1623FDF10300ACD198 /* SQLite */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 9B7BDAF423FDEE2600ACD198 /* XCRemoteSwiftPackageReference "SQLite.swift" */;
-			productName = SQLite;
-		};
-/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 9FC7503B1D2A532C00458D91 /* Project object */;
 }
