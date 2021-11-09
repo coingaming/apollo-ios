@@ -23,7 +23,7 @@ final class OperationMessage {
   }
 
   let serializationFormat = JSONSerializationFormat.self
-  let message: GraphQLMap
+  var message: GraphQLMap = [:]
   var serialized: String?
 
   var rawMessage : String? {

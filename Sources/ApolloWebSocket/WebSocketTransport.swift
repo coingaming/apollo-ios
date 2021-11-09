@@ -69,6 +69,8 @@ public class WebSocketTransport {
   private let sendOperationIdentifiers: Bool
   private let reconnectionInterval: TimeInterval
   private let allowSendingDuplicates: Bool
+  
+  fileprivate let sequenceNumberCounter = Atomic<Int>(0)
   fileprivate var reconnected = false
 
   /// - NOTE: Setting this won't override immediately if the socket is still connected, only on reconnection.
@@ -308,13 +310,13 @@ public class WebSocketTransport {
     processingQueue.async {
       self.write(message)
 
-      self.subscribers[identifier] = resultHandler
+      self.subscribers[sequenceNumber] = resultHandler
       if operation.operationType == .subscription {
-        self.subscriptions[identifier] = message
+        self.subscriptions[sequenceNumber] = message
       }
     }
 
-    return identifier
+    return sequenceNumber
   }
 
   public func unsubscribe(_ subscriptionId: String) {
